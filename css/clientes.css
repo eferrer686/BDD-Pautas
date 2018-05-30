@@ -2,23 +2,29 @@ h1{
   font-family: sans-serif;
   font-weight: bold;
   padding: 10px;
+  color: white;
 }
 a{
   text-decoration: none;
-  color: black;
+  color: white;
 }
 .tableClientes{
-  padding: 10px;
   width: 100%;
+  align-content: center;
 
 }
 .tableClientesSQL{
+  width: 90%;
   position: relative;
   font-family: sans-serif;
   font-size: 24;
-  padding-left: 50px;
-  margin: 0 auto;
+  padding: 10px;
+  margin:auto;
   text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  align-items: center;
+
 }
 .tableClientes input[type=button], input[type=submit]{
   background-color: grey;
@@ -36,24 +42,31 @@ a{
 }
 
 .trTableClientes td{
+  margin: 0 auto;
   padding-left: 10px;
   padding-right: 10px;
-  border-bottom:1px solid cornflowerblue;
+  border-bottom:1px solid grey;
 }
 .trTableTop td{
-    border-bottom:2px solid cornflowerblue;
+  margin: 0 auto;
+  border-bottom:2px solid rgba(25,25,25);
 }
 .trTitleTable td{
-    padding: 0 100px 0 0;
+  margin: 0 auto;
+  padding: 0 100px 0 0;
+}
+.trTitleTable tr, .trTableClientes tr, .trTableTop tr{
+  margin: 0 auto;
+  width: 100%;
 }
 .trTable,
-.trTableClientes:hover{
-    background-color: white;
+.trTableClientes{
+    background-color: none;
     transition:0.2s ease;
 }
 .trTable:hover,
 .trTableClientes:hover{
-    background-color: lightblue;
+    background-color: rgba(204,204,204);
     transition:0.2s ease;
     cursor: pointer;
 

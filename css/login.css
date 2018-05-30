@@ -1,22 +1,26 @@
 body{
+    margin: 0;
+    height: 100%;
     background-image: url(../images/integracion21.jpg);
     background-size:cover;
-    background-repeat:   no-repeat;
-    background-position-y: center ;
+    background-repeat:  no-repeat;
+    background-position: center ;
 }
 p{
     font-family: sans-serif;
     color: white;
 }
 .loginPage{
-   margin: auto auto;
+   margin:0 auto;
    height: 50%;
    width: 50%;
+   min-width: 300px;
    padding: 10px;
 }
 .loginForm,.registerLogin{
    margin: 0 auto;
    width: 50%;
+   min-width: 300px;
    background-color: rgb(255, 255, 255, 0.5);
    padding: 10px;
 }

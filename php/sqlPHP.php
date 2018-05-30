@@ -9,7 +9,7 @@
     $pwd = '';
     $sqlFrom='';
     $searchText='';
-    $searchMethod='nombre';
+    $searchMethod='';
     $updateName='';
     $updateValue='';
     $tableID='';
@@ -62,9 +62,6 @@ function login() {
             header("Location: /bdd-pautas/html/home.php");
             exit();
 
-
-
-
     }
     else{
 
@@ -94,11 +91,17 @@ function sqlSearch(){
       echo "Failed to connect to MySQL: " . mysqli_connect_error();
       }
 
+    if (isset($_SESSION['searchText'])){
+        $searchText=$_SESSION['searchText'];
+    }
+    if (isset($_SESSION['searchMethod'])){
+        $searchMethod=$_SESSION['searchMethod'];
+    }
+
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '".$searchText."%' and idUser = ".$_SESSION['idUser'];
-    //echo $sql;
+    // echo $sql;
 
     $result = mysqli_query($con,$sql);
-
 
 
 }

@@ -11,6 +11,7 @@
     <?php checkLogin(); ?>
     <?php topnav(); ?>
     <link rel="stylesheet" type="text/css" href="../css/clientes.css">
+    <link rel="stylesheet" type="text/css" href="../css/background.css">
     <link rel="icon" href="../css/icon.png">
   </head>
   <body>
@@ -22,6 +23,11 @@
           <form class="tableClientes" action="clientes.php" method="post">
             <input type="text" name="Nombre" value="">
             <input type="submit" name="Buscar" value="Buscar">
+          </form>
+        </td>
+        <td class="searchInput">
+          <form class="addInput" action="clientes.php" method="post">
+            <input type="submit" name="addCliente" value="Nuevo">
           </form>
         </td>
     </table>

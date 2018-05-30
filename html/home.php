@@ -9,8 +9,9 @@
     <?php topnav(); ?>
     <link rel="stylesheet" type="text/css" href="../css/home.css">
     <link rel="icon" href="../css/icon.png">
+    <link rel="stylesheet" type="text/css" href="../css/background.css">
   </head>
   <body>
-    <h1> Bienvenido <?php printNombre(); ?> ! </h1>
+    <h1> Bienvenido <?php printNombre(); ?></h1>
   </body>
 </html>

@@ -2,7 +2,7 @@
     include '../php/sqlPHP.php';
     include '../php/gui.php';
     include '../php/clientes.php';
-    include '../php/clienteInfo.php';
+    include '../php/clienteNuevo.php';
 ?>
 <html>
 
@@ -15,8 +15,8 @@
     <link rel="stylesheet" type="text/css" href="../css/background.css">
     <link rel="icon" href="../css/icon.png">
   </head>
-    <title> Cliente: <?php printNombreCliente(); ?> </title>
+    <title> Cliente Nuevo</title>
   <body>
-    <h1> Cliente: <?php printNombreCliente(); ?> </h1>
+    <h1> Cliente Nuevo</h1>
   </body>
 </html>

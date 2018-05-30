@@ -7,18 +7,16 @@
   if(isset($_POST['Buscar'])){
       searchClientes();
   }
-
-  if(isset($_POST['add'])){
-      addCliente();
+  if(isset($_POST['Nuevo'])){
+      goToAddCliente();
   }
   if(isset($_POST['idCliente'])){
+      $_SESSION['idCliente'] = $_POST['idCliente'];
       goToCliente();
   }
   function searchClientes(){
       global $searchText;
-
       $_SESSION['searchText'] = $_POST['Nombre'];
-      $_SESSION['searchMethod'] = "nombre";
       header("Location: /bdd-pautas/html/clientes.php");
   }
   function searchCliente(){
@@ -28,8 +26,7 @@
       $nombreCliente;
 
       $sqlFrom = 'clientes';
-      $searchMethod = 'idUser';
-      $searchText = $_SESSION['idUser'];
+      $searchMethod = 'nombre';
 
       echo '<table class="tableClientesSQL">';
       echo
@@ -42,14 +39,6 @@
           </td><td>Pautas
           </td></tr>
            ";
-
-       if (isset($_SESSION['searchMethod'])){
-           $searchMethod=$_SESSION['searchMethod'];
-
-       }
-       if (isset($_SESSION['searchText'])){
-           $searchText=$_SESSION['searchText'];
-       }
       sqlSearch();
 
       if($result != null){
@@ -67,12 +56,15 @@
                "</td></tr> ";
             }
 
-      } else{
-          unset($_SESSION['searchMethod']);
       }
   }
   function goToCliente(){
     header("Location: /bdd-pautas/html/clienteInfo.php");
     exit();
   }
+  function goToAddCliente(){
+    header("Location: /bdd-pautas/html/clienteNuevo.php");
+    exit();
+  }
+
 ?>
