@@ -3,3 +3,61 @@ h1{
   font-weight: bold;
   padding: 10px;
 }
+a{
+  text-decoration: none;
+  color: black;
+}
+.tableClientes{
+  padding: 10px;
+
+}
+.tableClientesSQL{
+  position: relative;
+  width: 50%;
+  font-family: sans-serif;
+  font-size: 24;
+  padding-left: 50px;
+  margin: 0 auto;
+  text-align: center;
+}
+.tableClientes input[type=button], input[type=submit]{
+  background-color: #3399ff;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.tableClientes input[type=text]{
+  padding: 10px;
+  border-radius: 3px;
+  border-color: #3399ff;
+}
+
+.trTableClientes td{
+  border-bottom:1px solid cornflowerblue;
+}
+.trTableTop td{
+    border-bottom:2px solid cornflowerblue;
+}
+.trTitleTable td{
+    padding: 0 100px 0 0;
+}
+.trTable{
+    background-color: white;
+    transition:0.5s ease;
+    animation: tableRow 0.5s;
+}
+@keyframes tableRow{
+    from{color: white;}
+    to{color:black;}
+}
+.trTable:hover,
+.trTableClientes:hover{
+    background-color: lightblue;
+    transition:0.5s ease;
+    cursor: pointer;
+    font-size: 26;
+
+}

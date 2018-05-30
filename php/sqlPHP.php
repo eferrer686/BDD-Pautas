@@ -57,11 +57,9 @@ function login() {
 
         $row = $result->fetch_assoc();
 
-
-
-            $_SESSION['idUser'] = $row["idUser"];
+            $_SESSION['idUser'] = $row["iduser"];
             $_SESSION['nombre'] = $row["nombre"];
-            header("Location: /bddpautas/html/home.php");
+            header("Location: /bdd-pautas/html/home.php");
             exit();
 
 
@@ -127,6 +125,7 @@ function tableClientes(){
          ";
     if (isset($_SESSION['searchMethod'])){
         $searchMethod=$_SESSION['searchMethod'];
+        echo $searchMethod;
     }
     if (isset($_SESSION['searchText'])){
         $searchText=$_SESSION['searchText'];
@@ -137,11 +136,11 @@ function tableClientes(){
         while($row = mysqli_fetch_array($result))
           {
             echo"
-            <tr class='trTableClientes'><td class='idPersona'>" . $row['idPersona'] .
-            "</td><td>" . $row['nombre'] .
+              <tr class='trTableClientes'><td class='idPersona'>" . $row['idPersona'] .
+             "</td><td>" . $row['nombre'] .
              "</td><td>" . $row['estadoCivil'] .
              "</td><td>" . $row['edad'] .
-            "</td><td>" . $row['fNacimiento'] .
+             "</td><td>" . $row['fNacimiento'] .
              "</td><td>" . $row['potencial'] .
              "</td><td>" . $row['genero'] .
              "</td><td>" . $row['fVisita'] .
@@ -185,7 +184,10 @@ function logout(){
 
   $user='';
   $pwd='';
-  header("Location: /bddpautas/index.php");
+  echo '<script language="javascript">';
+  echo 'alert("Inicie sesion otra vez porfavor")';
+  echo '</script>';
+  header("Location: /bdd-pautas/index.php");
   exit();
 }
 
@@ -193,7 +195,7 @@ function checkLogin(){
   global $user;
   if($_SESSION['user'] ==''){
     echo 'alert("Favor de iniciar sesión")';
-    header("Location: /bddpautas/index.php");
+    header("Location: /bdd-pautas/index.php");
   }
 }
 

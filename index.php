@@ -8,6 +8,8 @@
 
     <head>
        <div topnav = "topnav.php"></div>
+       <link rel="icon" href="css/icon.png">
+       <title>BDD Pautas</title>
     </head>
 
     <body>
