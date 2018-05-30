@@ -9,11 +9,11 @@ a{
 }
 .tableClientes{
   padding: 10px;
+  width: 100%;
 
 }
 .tableClientesSQL{
   position: relative;
-  width: 50%;
   font-family: sans-serif;
   font-size: 24;
   padding-left: 50px;
@@ -21,7 +21,7 @@ a{
   text-align: center;
 }
 .tableClientes input[type=button], input[type=submit]{
-  background-color: #3399ff;
+  background-color: grey;
   border: none;
   color: white;
   padding: 10px 15px;
@@ -32,10 +32,12 @@ a{
 .tableClientes input[type=text]{
   padding: 10px;
   border-radius: 3px;
-  border-color: #3399ff;
+  border-color: grey;
 }
 
 .trTableClientes td{
+  padding-left: 10px;
+  padding-right: 10px;
   border-bottom:1px solid cornflowerblue;
 }
 .trTableTop td{
@@ -44,20 +46,15 @@ a{
 .trTitleTable td{
     padding: 0 100px 0 0;
 }
-.trTable{
+.trTable,
+.trTableClientes:hover{
     background-color: white;
-    transition:0.5s ease;
-    animation: tableRow 0.5s;
-}
-@keyframes tableRow{
-    from{color: white;}
-    to{color:black;}
+    transition:0.2s ease;
 }
 .trTable:hover,
 .trTableClientes:hover{
     background-color: lightblue;
-    transition:0.5s ease;
+    transition:0.2s ease;
     cursor: pointer;
-    font-size: 26;
 
 }

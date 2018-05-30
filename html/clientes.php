@@ -5,6 +5,8 @@
 ?>
 <html>
   <head>
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/clientes.js"></script>
     <title> Clientes </title>
     <?php checkLogin(); ?>
     <?php topnav(); ?>
@@ -26,7 +28,8 @@
     <?php searchCliente(); ?>
   </body>
   <footer>
-    <form class="trFormHiddenClientes" action="clientes.php" method="post">
+    <form class="formClienteInfo" action="clientes.php" method="post">
+      <input type="text" class="idClienteText" name="idCliente" value="" hidden="true">
     </form>
   </footer>
 </html>

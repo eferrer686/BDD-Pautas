@@ -11,6 +11,9 @@
   if(isset($_POST['add'])){
       addCliente();
   }
+  if(isset($_POST['idCliente'])){
+      goToCliente();
+  }
   function searchClientes(){
       global $searchText;
 
@@ -32,6 +35,10 @@
       echo
           "<tr class='trTableTop'><td>ID
           </td><td>Nombre
+          </td><td>Contacto
+          </td><td>Mail
+          </td><td>RFC
+          </td><td>Direccion
           </td><td>Pautas
           </td></tr>
            ";
@@ -49,8 +56,13 @@
           while($row = mysqli_fetch_array($result))
             {
               echo
-               "<tr class='trTableClientes'><td class='idCliente'>" . $row['idCliente'] .
+               "<tr class='trTableClientes'>
+               <td class='idCliente'>" . $row['idCliente'] .
                "</td><td>" . $row['nombre'] .
+               "</td><td>" . $row['contacto'] .
+               "</td><td>" . $row['mail'] .
+               "</td><td>" . $row['rfc'] .
+               "</td><td>" . $row['direccion'] .
                "</td><td>" . $row['numPautas'] .
                "</td></tr> ";
             }
@@ -58,7 +70,9 @@
       } else{
           unset($_SESSION['searchMethod']);
       }
-
-
+  }
+  function goToCliente(){
+    header("Location: /bdd-pautas/html/clienteInfo.php");
+    exit();
   }
 ?>

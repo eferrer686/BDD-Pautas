@@ -1,7 +1,7 @@
 $(document).ready(function() {
-    $(".trTableClientes").click(function(){
-       var idCliente = $(this).find(".idCliente").text();
-        $("#trFormHiddenCliente").val(idCliente);
-        $("#trFormHiddenClientes").submit();
-     });
+  $(".trTableClientes").click(function(){
+    var idCliente = $(this).find(".idCliente").text();
+    $(".idClienteText").val(idCliente);
+    $("#formClienteInfo").submit();
+  });
 });
