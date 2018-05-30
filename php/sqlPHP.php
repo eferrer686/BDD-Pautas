@@ -91,17 +91,12 @@ function sqlSearch(){
       echo "Failed to connect to MySQL: " . mysqli_connect_error();
       }
 
-    if (isset($_SESSION['searchText'])){
-        $searchText=$_SESSION['searchText'];
-    }
-    if (isset($_SESSION['searchMethod'])){
-        $searchMethod=$_SESSION['searchMethod'];
-    }
 
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '".$searchText."%' and idUser = ".$_SESSION['idUser'];
     // echo $sql;
 
     $result = mysqli_query($con,$sql);
+
 
 
 }
@@ -128,7 +123,6 @@ function tableClientes(){
          ";
     if (isset($_SESSION['searchMethod'])){
         $searchMethod=$_SESSION['searchMethod'];
-        echo $searchMethod;
     }
     if (isset($_SESSION['searchText'])){
         $searchText=$_SESSION['searchText'];
@@ -139,11 +133,11 @@ function tableClientes(){
         while($row = mysqli_fetch_array($result))
           {
             echo"
-              <tr class='trTableClientes'><td class='idPersona'>" . $row['idPersona'] .
-             "</td><td>" . $row['nombre'] .
+            <tr class='trTableClientes'><td class='idPersona'>" . $row['idPersona'] .
+            "</td><td>" . $row['nombre'] .
              "</td><td>" . $row['estadoCivil'] .
              "</td><td>" . $row['edad'] .
-             "</td><td>" . $row['fNacimiento'] .
+            "</td><td>" . $row['fNacimiento'] .
              "</td><td>" . $row['potencial'] .
              "</td><td>" . $row['genero'] .
              "</td><td>" . $row['fVisita'] .
@@ -158,6 +152,7 @@ function tableClientes(){
 
     mysqli_close($con);
 }
+
 
 
 //Update and Delete

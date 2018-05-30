@@ -71,3 +71,19 @@ a{
     cursor: pointer;
 
 }
+.actualizarInput input[type='submit']{
+  background-color: grey;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+  right:    10px;
+  bottom:   10px;
+  position: fixed;
+}
+input[type=submit]:hover, .tableClientes input[type=submit]:hover{
+  background-color: rgba(10,10,10);
+}
