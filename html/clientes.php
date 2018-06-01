@@ -6,7 +6,6 @@
 <html>
   <head>
     <script src="../js/jquery-3.3.1.min.js"></script>
-    <script src="../js/editableTable.js"></script>
     <script src="../js/clientes.js"></script>
     <title> Clientes </title>
     <?php checkLogin(); ?>
@@ -34,8 +33,9 @@
     </table>
     <?php searchCliente(); ?>
 
-    <form class="actualizarInput" action="index.html" method="post">
-      <input type="submit" name="Actualizar" value="Actualizar">
+    <form class="actualizarInput" action="clientes.php" method="post">
+      <input type="button" name="Actualizar" value="Actualizar" class="actualizarButton">
+      <input type="text" class="tablaSQLClientes" name="tablaSQLClientes" value="" hidden='true'>
     </form>
 
   </body>

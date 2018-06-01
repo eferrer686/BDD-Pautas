@@ -169,6 +169,7 @@ function sqlUpdate(){
       }
 
     $sql = "UPDATE ".$sqlFrom." SET ".$updateName."='".$updateValue."' WHERE ".$tableID."= ".$idTuple."";
+    
     $result = mysqli_query($con,$sql);
 
 
