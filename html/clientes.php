@@ -25,14 +25,16 @@
             <input type="submit" name="Buscar" value="Buscar">
           </form>
         </td>
-        
+
     </table>
-    <?php searchCliente(); ?>
 
     <form class="actualizarInput" action="clientes.php" method="post">
       <input type="button" name="Actualizar" value="Actualizar" class="actualizarButton">
       <input type="text" class="tablaSQLClientes" name="tablaSQLClientes" value="" hidden='true'>
     </form>
+
+    <?php searchCliente(); ?>
+
 
   </body>
   <footer>

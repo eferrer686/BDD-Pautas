@@ -22,7 +22,8 @@ function printNombreCliente(){
           echo $row['nombre'];
         }
       }else{
-          unset($_SESSION['searchMethod']);
+        unset($_SESSION['searchMethod']);
+        unset($_SESSION['searchText']);
       }
       mysqli_close($con);
 }

@@ -7,7 +7,7 @@ if(isset($_POST['Buscar'])){
     searchProveedores();
 }
 if(isset($_POST['idProveedor'])){
-    goToProveedor();
+  goToProveedor();
 }
 if(isset($_POST['tablaSQLProveedores'])){
 
@@ -74,8 +74,10 @@ function searchProveedor(){
         echo"</table></div>";
     } else{
         unset($_SESSION['searchMethod']);
+        unset($_SESSION['searchText']);
     }
     mysqli_close($con);
+    
   }
 
   function updateSQLTable(){

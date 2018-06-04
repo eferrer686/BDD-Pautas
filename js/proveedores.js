@@ -1,17 +1,22 @@
 $(document).ready(function() {
+
   $(".trTableProveedores").dblclick(function(){
     var idProveedor = $(this).find(".idProveedor").text();
 
     $(".idProveedorText").val(idProveedor);
     $(".formProveedorInfo").submit();
   });
+
   $(".comision").keypress(function(e){
     var keycode = e.which;
           /* 48-57: 0 -9
              8:backspace */
-    if((keycode >= 48 && keycode <= 57) || keycode == 8 || keycode == 46 )
-       return true;
-    return false;
+    if((keycode >= 48 && keycode <= 57) || keycode == 8 || keycode == 46 ){
+      return true;
+    } else {
+      return false;
+    }
+
   });
 
   $(".actualizarButton").click(function(){
