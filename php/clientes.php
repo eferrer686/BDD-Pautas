@@ -73,6 +73,7 @@
              "</td><td class='nombre' contenteditable=true>".
              "</td><td class='contacto'contenteditable=true>".
              "</td><td class='mail' contenteditable=true>".
+             "</td><td class='telefono' contenteditable=true>".
              "</td><td class='rfc' contenteditable=true>".
              "</td><td class='direccion' contenteditable=true>".
              "</td><td class='numPautas'>".
@@ -153,10 +154,21 @@
       $lastRow[5] .'","' .
       $lastRow[6] .'")';
 
-      echo '<script language="javascript">';
-      echo 'alert("'. $sql .'")';
-      echo '</script>';
+
 
     $result = mysqli_query($con,$sql);
+    $lastID  = mysqli_insert_id($con);
+
+    $sql = "INSERT INTO user_has_cliente (user_iduser,Cliente_idCliente) VALUES ('". $_SESSION['idUser'] . "', '" . $lastID . "')"  ;
+
+    $result = mysqli_query($con,$sql);
+    mysqli_close($con);
+
+    $_SESSION['searchMethod'] = 'nombre';
+    $_SESSION['searchText'] = '';
+
+    searchClientes();
+
+
   }
 ?>

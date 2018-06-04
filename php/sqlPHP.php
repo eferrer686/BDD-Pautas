@@ -44,14 +44,14 @@ function setUser(){
 function login() {
     global $servername,$username,$password,$dbname,$user,$pwd;
 
-    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    $con = mysqli_connect($servername, $username, $password, $dbname);
     // Check connection
-    if (!$conn) {
+    if (!$con) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
     $sql = "SELECT * FROM user WHERE username = '" . $_SESSION['user'] . "' and password = '" . $_SESSION['pwd'] ."'";
-    $result = mysqli_query($conn, $sql);
+    $result = mysqli_query($con, $sql);
     //Encontrar usuarios
     if (mysqli_num_rows($result) > 0) {
 
@@ -59,6 +59,7 @@ function login() {
 
             $_SESSION['idUser'] = $row["iduser"];
             $_SESSION['nombre'] = $row["nombre"];
+            $_POST['Nombre'] = '';
             header("Location: /bdd-pautas/html/home.php");
             exit();
 
@@ -76,7 +77,7 @@ function login() {
 
     }
 
-    mysqli_close($conn);
+    mysqli_close($con);
  }
 //Table Search and Echo
 function sqlSearch(){
@@ -93,7 +94,7 @@ function sqlSearch(){
 
 
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '".$searchText."%' and idUser = ".$_SESSION['idUser'];
-    // echo $sql;
+    //echo $sql;
 
     $result = mysqli_query($con,$sql);
 
@@ -169,9 +170,10 @@ function sqlUpdate(){
       }
 
     $sql = "UPDATE ".$sqlFrom." SET ".$updateName."='".$updateValue."' WHERE ".$tableID."= ".$idTuple."";
-    
+
     $result = mysqli_query($con,$sql);
 
+    
 
 
 }

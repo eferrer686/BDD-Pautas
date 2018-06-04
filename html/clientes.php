@@ -25,11 +25,7 @@
             <input type="submit" name="Buscar" value="Buscar">
           </form>
         </td>
-        <td class="searchInput">
-          <form class="addInput" action="clientes.php" method="post">
-            <input type="submit" name="addCliente" value="Nuevo">
-          </form>
-        </td>
+        
     </table>
     <?php searchCliente(); ?>
 

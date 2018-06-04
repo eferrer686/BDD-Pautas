@@ -31,7 +31,7 @@ $(document).ready(function() {
       sqlTable[i-1]=sqlRow;
 
     }
-    console.log(sqlTable);
+
     $(".tablaSQLClientes").val(JSON.stringify(sqlTable));
     $(".actualizarInput").submit();
   });
