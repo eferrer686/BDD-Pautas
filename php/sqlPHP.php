@@ -93,7 +93,7 @@ function sqlSearch(){
       }
 
 
-    $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '".$searchText."%' and idUser = ".$_SESSION['idUser'];
+    $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '%".$searchText."%' and idUser = ".$_SESSION['idUser'];
     //echo $sql;
 
     $result = mysqli_query($con,$sql);
@@ -173,7 +173,7 @@ function sqlUpdate(){
 
     $result = mysqli_query($con,$sql);
 
-    
+
 
 
 }
