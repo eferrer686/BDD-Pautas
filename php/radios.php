@@ -29,6 +29,8 @@ function searchRadio(){
     $idRadio,
     $estacionRadio;
 
+    $tablaProveedores = getAllProveedores();
+
     $sqlFrom = 'radios';
     $searchMethod = 'estacion';
 
@@ -38,6 +40,7 @@ function searchRadio(){
         </td><td>Estacion
         </td><td>Frecuencia
         </td><td>Siglas
+        </td><td>Proveedor
         </td></tr>
          ";
    if (isset($_SESSION['searchMethod'])){
@@ -57,7 +60,9 @@ function searchRadio(){
              "</td><td class='estacion' contenteditable=true>" . $row['estacion'] .
              "</td><td class='frecuencia'contenteditable=true>" . $row['frecuencia'] .
              "</td><td class='siglas' contenteditable=true>" . $row['siglas'] .
-             "</td> ";
+             "</td><td class='proveedor'><select id='sel'>" . setSelect($row['idProveedor'], $tablaProveedores) .
+             "</select></td></tr>";
+
           }
 
           echo
@@ -66,7 +71,8 @@ function searchRadio(){
            "</td><td class='estacion' contenteditable=true>".
            "</td><td class='frecuencia'contenteditable=true>".
            "</td><td class='siglas' contenteditable=true>".
-           "</td></tr> ";
+           "</td><td class='proveedor'><select>".setSelect(0,$tablaProveedores)."</select>".
+           "</td> ";
 
         echo"</table></div>";
     } else{
@@ -97,6 +103,9 @@ function searchRadio(){
       $updateName = 'siglas';
       $updateValue = $newTable[$i][3];
       sqlUpdate();
+      $updateName = 'Proveedor_idProveedor';
+      $updateValue = $newTable[$i][4];
+      sqlUpdate();
 
 
     }
@@ -126,7 +135,7 @@ function searchRadio(){
       echo "Failed to connect to MySQL: " . mysqli_connect_error();
       }
 
-    $sql = 'INSERT INTO radio (estacion, frecuencia, siglas) VALUES ("' .
+    $sql = 'INSERT INTO radio (estacion, frecuencia, siglas,Proveedor_idProveedor) VALUES ("' .
       $lastRow[1] .'","' .
       $lastRow[2] .'","' .
       $lastRow[3] .'","' .
@@ -135,13 +144,9 @@ function searchRadio(){
 
 
     $result = mysqli_query($con,$sql);
-    $lastID  = mysqli_insert_id($con);
-
-    $sql =  "INSERT INTO user_has_radio (user_iduser, Radio_idRadio) VALUES ('". $_SESSION['idUser'] . "', '" . $lastID . "')";
 
 
-    $result = mysqli_query($con,$sql);
-    mysqli_close($con);
+
 
     $_SESSION['searchMethod'] = 'estacion';
     $_SESSION['searchText'] = '';
@@ -157,4 +162,50 @@ function searchRadio(){
     header("Location: /bdd-pautas/html/radioInfo.php");
     exit();
   }
+  function getAllProveedores(){
+    global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,
+
+    $idRadio,
+    $estacionRadio;
+
+  // Get all Proveedores
+  $sqlFrom = 'proveedores';
+  $searchMethod = 'nombre';
+  $searchText = "";
+
+  sqlSearch();
+
+  $tablaProveedores;
+
+  if($result != null){
+    $i = 0;
+      while($row = mysqli_fetch_array($result)){
+            $tablaProveedores[$i]=$row;
+            $i=$i+1;
+        }
+      }
+      return $tablaProveedores;
+  }
+
+
+
+  function setSelect($idProveedor,$tablaProveedores){
+    $r='';
+    for ($i=0; $i < count($tablaProveedores); $i++) {
+      if($tablaProveedores[$i]['idProveedor'] == $idProveedor){
+
+        $r = $r.
+        "<option value='". $tablaProveedores[$i]['idProveedor'] ."' selected='selected'>"
+        .  $tablaProveedores[$i]['nombre'] .
+        "</option>";}
+      else{
+        $r = $r.
+        "<option value='". $tablaProveedores[$i]['idProveedor'] ."'>"
+        . $tablaProveedores[$i]['nombre'] ."</option>";
+        }
+      }
+      return $r;
+
+    }
+
 ?>

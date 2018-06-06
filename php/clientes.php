@@ -92,6 +92,8 @@
   function goToCliente(){
     $_SESSION['searchMethod'] = 'idCliente';
     $_SESSION['searchText'] = $_POST['idCliente'];
+    $_SESSION['idCliente'] = $_POST['idCliente'];
+
 
     header("Location: /bdd-pautas/html/clienteInfo.php");
     exit();

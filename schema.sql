@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS `bddpautas`.`cliente` (
   ` marca` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`idCliente`))
 ENGINE = InnoDB
-
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -38,10 +37,8 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `bddpautas`.`pauta` (
   `idPauta` INT(11) NOT NULL AUTO_INCREMENT,
   `Cliente_idCliente` INT(11) NOT NULL,
-  `programa` VARCHAR(45) NULL DEFAULT NULL,
-  `inversion` VARCHAR(45) NULL DEFAULT NULL,
-  `rating` VARCHAR(45) NULL DEFAULT NULL,
-  `total` VARCHAR(45) NULL DEFAULT NULL,
+  `nombre` VARCHAR(45) NULL DEFAULT NULL,
+  `invTotal` VARCHAR(45) NULL,
   PRIMARY KEY (`idPauta`),
   INDEX `fk_Propuesta_Cliente1_idx` (`Cliente_idCliente` ASC),
   CONSTRAINT `fk_Propuesta_Cliente1`
@@ -50,7 +47,6 @@ CREATE TABLE IF NOT EXISTS `bddpautas`.`pauta` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -65,7 +61,6 @@ CREATE TABLE IF NOT EXISTS `bddpautas`.`proveedor` (
   `direccion` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`idProveedor`))
 ENGINE = InnoDB
-
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -86,7 +81,6 @@ CREATE TABLE IF NOT EXISTS `bddpautas`.`radio` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -173,7 +167,6 @@ CREATE TABLE IF NOT EXISTS `bddpautas`.`servicioradio` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -223,7 +216,6 @@ CREATE TABLE IF NOT EXISTS `bddpautas`.`user` (
   `nombre` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`iduser`))
 ENGINE = InnoDB
-
 DEFAULT CHARACTER SET = utf8;
 
 
@@ -292,7 +284,7 @@ CREATE TABLE IF NOT EXISTS `bddpautas`.`proveedores` (`idProveedor` INT, `nombre
 -- -----------------------------------------------------
 -- Placeholder table for view `bddpautas`.`radios`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `bddpautas`.`radios` (`estacion` INT, `frecuencia` INT, `idRadio` INT, `siglas` INT, `iduser` INT, `idProveedor` INT);
+CREATE TABLE IF NOT EXISTS `bddpautas`.`radios` (`estacion` INT, `frecuencia` INT, `idRadio` INT, `siglas` INT, `iduser` INT, `idProveedor` INT, `pNombre` INT);
 
 -- -----------------------------------------------------
 -- View `bddpautas`.`clientes`
@@ -320,7 +312,7 @@ CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY D
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `bddpautas`.`radios`;
 USE `bddpautas`;
-CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bddpautas`.`radios` AS select `r`.`estacion` AS `estacion`,`r`.`frecuencia` AS `frecuencia`,`r`.`idRadio` AS `idRadio`,`r`.`siglas` AS `siglas`,`p`.`iduser` AS `iduser`,`p`.`idProveedor` AS `idProveedor` from (`bddpautas`.`proveedores` `p` join `bddpautas`.`radio` `r`) where (`p`.`idProveedor` = `r`.`Proveedor_idProveedor`);
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `bddpautas`.`radios` AS select `r`.`estacion` AS `estacion`,`r`.`frecuencia` AS `frecuencia`,`r`.`idRadio` AS `idRadio`,`r`.`siglas` AS `siglas`,`p`.`iduser` AS `iduser`,`p`.`idProveedor` AS `idProveedor`,`p`.`nombre` AS `pNombre` from (`bddpautas`.`proveedores` `p` join `bddpautas`.`radio` `r`) where (`p`.`idProveedor` = `r`.`Proveedor_idProveedor`);
 CREATE USER 'webuser';
 
 GRANT SELECT, INSERT, TRIGGER, UPDATE, DELETE ON TABLE `bddpautas`.* TO 'webuser';

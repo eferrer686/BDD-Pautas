@@ -94,8 +94,9 @@ function sqlSearch(){
 
 
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '%".$searchText."%' and idUser = ".$_SESSION['idUser'];
-    //echo $sql;
-
+    // echo '<script language="javascript">';
+    // echo 'alert("'.$sql.'")';
+    // echo '</script>';
     $result = mysqli_query($con,$sql);
 
 
