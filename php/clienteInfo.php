@@ -1,4 +1,8 @@
 <?php
+if(isset($_POST['tablaSQLPautas'])){
+    $_SESSION['tablaSQL'] = json_decode($_POST['tablaSQLPautas']);
+    updateSQLTablePautas();
+}
 
 function setAll(){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,
@@ -90,7 +94,7 @@ function pautasCliente(){
 
   $sqlFrom = 'pautas';
 
-  echo '<div class="bigTableContainer"> <table class="tableClientesSQL" id="tableClientesSQL">';
+  echo '<div class="bigTableContainer"> <table class="tablePautasSQL" id="tablePautasSQL">';
   echo
       "<tr class='trTableTop'><td>ID
       </td><td>Nombre
@@ -108,15 +112,15 @@ function pautasCliente(){
       while($row = mysqli_fetch_array($result))
         {
           echo
-           "<tr class='trTableClientes'id=editable>
+           "<tr class='trTablePautas'id=editable>
            <td class='idCliente'>" . $row['idPauta'] .
            "</td><td class='nombre' contenteditable=true>" . $row['nombre'] .
-           "</td><td class='invTotal'contenteditable=true>" . $row['invTotal'] .
+           "</td><td class='invTotal'>" . $row['invTotal'] .
            "</td> ";
         }
 
         echo
-        "<tr class='trTableClientes'id=editable>".
+        "<tr class='trTablePautas'id=editable>".
          "<td class='idCliente'>".
          "</td><td class='nombre' contenteditable=true>".
          "</td><td class='invTotal'>".
@@ -129,6 +133,54 @@ function pautasCliente(){
     unset($_SESSION['searchText']);
   }
   mysqli_close($con);
+
+}
+function updateSQLTablePautas(){
+
+      global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple;
+      $tableID = 'idPauta';
+      $sqlFrom = 'pauta';
+
+      $newTable = $_SESSION['tablaSQL'];
+      for ($i=0; $i < count($newTable)-1; $i++) {
+        $idTuple = $newTable[$i][0];
+
+        $updateName = 'nombre';
+        $updateValue = $newTable[$i][1];
+        sqlUpdate();
+
+      }
+
+      if($newTable[count($newTable)-1][1]!=''){
+          addPauta($newTable[count($newTable)-1]);
+      }
+}
+
+function addPauta($lastRow){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+  $sql = '  INSERT INTO pauta (Cliente_idCliente, nombre)  VALUES ("' .
+
+    $_SESSION['idCliente'] .'","' .
+    $lastRow[1] .'")';
+
+
+
+  $result = mysqli_query($con,$sql);
+
+  mysqli_close($con);
+
+
+
+
 
 }
 ?>

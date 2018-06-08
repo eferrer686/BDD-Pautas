@@ -23,7 +23,7 @@
       </td>
       <td class="searchInput">
         <form class="tableRadios" action="radios.php" method="post">
-          <input type="text" name="Nombre" value="">
+          <input type="text" name="Estacion" value="">
           <input type="submit" name="Buscar" value="Buscar">
         </form>
       </td>

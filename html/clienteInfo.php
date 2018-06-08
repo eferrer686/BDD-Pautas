@@ -8,7 +8,7 @@
 
   <head>
     <script src="../js/jquery-3.3.1.min.js"></script>
-    <script src="../js/clientes.js"></script>
+    <script src="../js/clienteInfo.js"></script>
     <?php checkLogin(); ?>
     <?php topnav(); ?>
     <?php  setAll();  ?>
@@ -18,6 +18,10 @@
   </head>
     <title> Cliente: <?php printNombreCliente(); ?> </title>
   <body>
+    <form class="actualizarInput" action="clienteInfo.php" method="post">
+      <input type="button" name="Actualizar" value="Actualizar" class="actualizarButton">
+      <input type="text" class="tablaSQLPautas" name="tablaSQLPautas" value="" hidden='true'>
+    </form>
     <h1> Cliente: <?php printNombreCliente(); ?> </h1>
     <table class="clienteInfo">
       <tr>
@@ -63,4 +67,9 @@
       </tr>
     </table>
   </body>
+  <footer>
+    <form class="formPautaInfo" action="clienteInfo.php" method="post">
+      <input type="text" class="idPautaText" name="idPauta" value="" hidden="true">
+    </form>
+  </footer>
 </html>

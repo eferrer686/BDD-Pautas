@@ -38,6 +38,8 @@ function searchRadio(){
     echo
         "<tr class='trTableTop'><td>ID
         </td><td>Estacion
+        </td><td>Estado
+        </td><td>Ciudad
         </td><td>Frecuencia
         </td><td>Siglas
         </td><td>Proveedor
@@ -58,6 +60,8 @@ function searchRadio(){
              "<tr class='trTableRadios'id=editable>
              <td class='idRadio'>" . $row['idRadio'] .
              "</td><td class='estacion' contenteditable=true>" . $row['estacion'] .
+             "</td><td class='estado' contenteditable=true>" . $row['estado'] .
+             "</td><td class='ciudad' contenteditable=true>" . $row['ciudad'] .
              "</td><td class='frecuencia'contenteditable=true>" . $row['frecuencia'] .
              "</td><td class='siglas' contenteditable=true>" . $row['siglas'] .
              "</td><td class='proveedor'><select id='sel'>" . setSelect($row['idProveedor'], $tablaProveedores) .
@@ -69,6 +73,8 @@ function searchRadio(){
           "<tr class='trTableRadios'id=editable>".
            "<td class='idRadio'>".
            "</td><td class='estacion' contenteditable=true>".
+           "</td><td class='estado' contenteditable=true>".
+           "</td><td class='ciudad' contenteditable=true>".
            "</td><td class='frecuencia'contenteditable=true>".
            "</td><td class='siglas' contenteditable=true>".
            "</td><td class='proveedor'><select>".setSelect(0,$tablaProveedores)."</select>".
@@ -97,14 +103,20 @@ function searchRadio(){
       $updateName = 'estacion';
       $updateValue = $newTable[$i][1];
       sqlUpdate();
-      $updateName = 'frecuencia';
+      $updateName = 'estado';
       $updateValue = $newTable[$i][2];
       sqlUpdate();
-      $updateName = 'siglas';
+      $updateName = 'ciudad';
       $updateValue = $newTable[$i][3];
       sqlUpdate();
-      $updateName = 'Proveedor_idProveedor';
+      $updateName = 'frecuencia';
       $updateValue = $newTable[$i][4];
+      sqlUpdate();
+      $updateName = 'siglas';
+      $updateValue = $newTable[$i][5];
+      sqlUpdate();
+      $updateName = 'Proveedor_idProveedor';
+      $updateValue = $newTable[$i][6];
       sqlUpdate();
 
 
@@ -135,11 +147,14 @@ function searchRadio(){
       echo "Failed to connect to MySQL: " . mysqli_connect_error();
       }
 
-    $sql = 'INSERT INTO radio (estacion, frecuencia, siglas,Proveedor_idProveedor) VALUES ("' .
+    $sql = 'INSERT INTO radio (estacion, estado, ciudad, frecuencia, siglas,Proveedor_idProveedor) VALUES ("' .
+
       $lastRow[1] .'","' .
       $lastRow[2] .'","' .
       $lastRow[3] .'","' .
-      $lastRow[4] .'")';
+      $lastRow[4] .'","' .
+      $lastRow[5] .'","' .
+      $lastRow[6] .'")';
 
 
 
@@ -159,7 +174,9 @@ function searchRadio(){
     $_SESSION['searchMethod'] = 'idRadio';
     $_SESSION['searchText'] = $_POST['idRadio'];
 
-    header("Location: /bdd-pautas/html/radioInfo.php");
+    $_SESSION['idRadio'] = $_POST['idRadio'];
+
+    header("Location: /bdd-pautas/html/tarifa.php");
     exit();
   }
   function getAllProveedores(){

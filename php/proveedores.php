@@ -56,7 +56,7 @@ function searchProveedor(){
              "<tr class='trTableProveedores'id=editable>
              <td class='idProveedor'>" . $row['idProveedor'] .
              "</td><td class='nombre' contenteditable=true>" . $row['nombre'] .
-             "</td><td class='telefono'contenteditable=true>" . $row['telefono'] .
+             "</td><td class='telefono' contenteditable=true>" . $row['telefono'] .
              "</td><td class='direccion' contenteditable=true>" . $row['direccion'] .
              "</td><td class='comision' contenteditable=true>". $row['comision'] .
              "</td> ";
@@ -77,7 +77,7 @@ function searchProveedor(){
         unset($_SESSION['searchText']);
     }
     mysqli_close($con);
-    
+
   }
 
   function updateSQLTable(){
