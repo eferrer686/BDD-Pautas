@@ -63,7 +63,7 @@ function searchTarifas(){
     global $searchText;
     $_SESSION['searchMethod'] = 'duracion';
     $_SESSION['searchText'] = $_POST['Nombre'];
-    header("Location: /bdd-pautas/html/tarifa.php");
+    header("Location: /bdd-pautas/html/tarifaRadio.php");
 }
 
 function searchTarifa(){
@@ -72,7 +72,7 @@ function searchTarifa(){
     $idTarifa,
     $estacionTarifa;
 
-    $sqlFrom = 'tarifas';
+    $sqlFrom = 'tarifasRadio';
     $searchMethod = 'duracion';
 
     echo '<div class="bigTableContainer"> <table class="tableTarifasSQL" id="tableTarifasSQL">';
@@ -137,7 +137,7 @@ function searchTarifa(){
     global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple,
     $idRadio;
     $tableID = 'idTarifa';
-    $sqlFrom = 'tarifa';
+    $sqlFrom = 'tarifaRadio';
 
     $newTable = $_SESSION['tablaSQL'];
     for ($i=0; $i < count($newTable)-1; $i++) {
@@ -177,7 +177,7 @@ function searchTarifa(){
       $_SESSION['searchText'] =$_SESSION['idRadio'];
 
 
-      header("Location: /bdd-pautas/html/tarifa.php");
+      header("Location: /bdd-pautas/html/tarifaRadio.php");
     }
   }
 
@@ -195,7 +195,7 @@ function searchTarifa(){
 
 
 
-    $sql = 'INSERT INTO tarifa (Radio_idRadio, duracion, tarifaGeneral, tarifaEspecifica, descuento, horaInicio, horaFin) VALUES ("' .
+    $sql = 'INSERT INTO tarifaRadio (Radio_idRadio, duracion, tarifaGeneral, tarifaEspecifica, descuento, horaInicio, horaFin) VALUES ("' .
       $_SESSION['idRadio'] .'","' .
       $lastRow[1] .'","' .
       $lastRow[2] .'","' .
@@ -213,7 +213,7 @@ function searchTarifa(){
     $_SESSION['searchMethod'] = 'idRadio';
     $_SESSION['searchText'] =$_SESSION['idRadio'];
 
-    header("Location: /bdd-pautas/html/tarifa.php");
+    header("Location: /bdd-pautas/html/tarifaRadio.php");
 
 
   }

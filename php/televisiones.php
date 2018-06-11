@@ -1,46 +1,46 @@
 <?php
 
-$idRadio = '';
-$estacionRadio = '';
+$idTelevision = '';
+$canalTelevision = '';
 
 if(isset($_POST['Buscar'])){
-    searchRadios();
+    searchTelevisiones();
 }
-if(isset($_POST['idRadio'])){
-  goToRadio();
+if(isset($_POST['idTelevision'])){
+  goToTelevision();
 }
-if(isset($_POST['tablaSQLRadios'])){
+if(isset($_POST['tablaSQLTelevisiones'])){
 
-    $_SESSION['tablaSQL'] = json_decode($_POST['tablaSQLRadios']);
+    $_SESSION['tablaSQL'] = json_decode($_POST['tablaSQLTelevisiones']);
 
     updateSQLTable();
 }
 
-function searchRadios(){
+function searchTelevisiones(){
     global $searchText;
-    $_SESSION['searchMethod'] = 'estacion';
-    $_SESSION['searchText'] = $_POST['Estacion'];
-    header("Location: /bdd-pautas/html/radios.php");
+    $_SESSION['searchMethod'] = 'canal';
+    $_SESSION['searchText'] = $_POST['Canal'];
+    header("Location: /bdd-pautas/html/televisiones.php");
 }
 
-function searchRadio(){
+function searchTelevision(){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,
 
-    $idRadio,
-    $estacionRadio;
+    $idTelevision,
+    $canalTelevision;
 
     $tablaProveedores = getAllProveedores();
 
-    $sqlFrom = 'radios';
-    $searchMethod = 'estacion';
+    $sqlFrom = 'televisiones';
+    $searchMethod = 'canal';
 
-    echo '<div class="bigTableContainer"> <table class="tableRadiosSQL" id="tableRadiosSQL">';
+    echo '<div class="bigTableContainer"> <table class="tableTelevisionesSQL" id="tableTelevisionesSQL">';
     echo
         "<tr class='trTableTop'><td>ID
-        </td><td>Estacion
+        </td><td>Nombre
+        </td><td>Canal
         </td><td>Estado
         </td><td>Ciudad
-        </td><td>Frecuencia
         </td><td>Siglas
         </td><td>Proveedor
         </td></tr>
@@ -57,12 +57,12 @@ function searchRadio(){
         while($row = mysqli_fetch_array($result))
           {
             echo
-             "<tr class='trTableRadios'id=editable>
-             <td class='idRadio'>" . $row['idRadio'] .
-             "</td><td class='estacion' contenteditable=true>" . $row['estacion'] .
+             "<tr class='trTableTelevisiones'id=editable>
+             <td class='idTelevision'>" . $row['idTelevision'] .
+             "</td><td class='nombre'contenteditable=true>" . $row['nombre'] .
+             "</td><td class='canal' contenteditable=true>" . $row['canal'] .
              "</td><td class='estado' contenteditable=true>" . $row['estado'] .
              "</td><td class='ciudad' contenteditable=true>" . $row['ciudad'] .
-             "</td><td class='frecuencia'contenteditable=true>" . $row['frecuencia'] .
              "</td><td class='siglas' contenteditable=true>" . $row['siglas'] .
              "</td><td class='proveedor'><select id='sel'>" . setSelect($row['idProveedor'], $tablaProveedores) .
              "</select></td></tr>";
@@ -70,12 +70,12 @@ function searchRadio(){
           }
 
           echo
-          "<tr class='trTableRadios'id=editable>".
-           "<td class='idRadio'>".
-           "</td><td class='estacion' contenteditable=true>".
+          "<tr class='trTableTelevisiones'id=editable>".
+           "<td class='idTelevision'>".
+           "</td><td class='nombre'contenteditable=true>".
+           "</td><td class='canal' contenteditable=true>".
            "</td><td class='estado' contenteditable=true>".
            "</td><td class='ciudad' contenteditable=true>".
-           "</td><td class='frecuencia'contenteditable=true>".
            "</td><td class='siglas' contenteditable=true>".
            "</td><td class='proveedor'><select>".setSelect(0,$tablaProveedores)."</select>".
            "</td> ";
@@ -93,23 +93,23 @@ function searchRadio(){
 
 
     global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple;
-    $tableID = 'idRadio';
-    $sqlFrom = 'radio';
+    $tableID = 'idTelevision';
+    $sqlFrom = 'television';
 
     $newTable = $_SESSION['tablaSQL'];
     for ($i=0; $i < count($newTable)-1; $i++) {
       $idTuple = $newTable[$i][0];
 
-      $updateName = 'estacion';
+      $updateName = 'nombre';
       $updateValue = $newTable[$i][1];
       sqlUpdate();
-      $updateName = 'estado';
+      $updateName = 'canal';
       $updateValue = $newTable[$i][2];
       sqlUpdate();
-      $updateName = 'ciudad';
+      $updateName = 'estado';
       $updateValue = $newTable[$i][3];
       sqlUpdate();
-      $updateName = 'frecuencia';
+      $updateName = 'ciudad';
       $updateValue = $newTable[$i][4];
       sqlUpdate();
       $updateName = 'siglas';
@@ -124,19 +124,19 @@ function searchRadio(){
 
 
     if($newTable[count($newTable)-1][1]!=''){
-        addRadio($newTable[count($newTable)-1]);
+        addTelevision($newTable[count($newTable)-1]);
     }else{
 
       $result = mysqli_query($con,$sql);
       mysqli_close($con);
 
-      $_SESSION['searchMethod'] = 'estacion';
+      $_SESSION['searchMethod'] = 'canal';
       $_SESSION['searchText'] = '';
 
-      searchRadios();
+      searchTelevisiones();
     }
   }
-  function addRadio($lastRow){
+  function addTelevision($lastRow){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
 
     $con = mysqli_connect($servername, $username, $password, $dbname);
@@ -147,7 +147,7 @@ function searchRadio(){
       echo "Failed to connect to MySQL: " . mysqli_connect_error();
       }
 
-    $sql = 'INSERT INTO radio (estacion, estado, ciudad, frecuencia, siglas,Proveedor_idProveedor) VALUES ("' .
+    $sql = 'INSERT INTO television (nombre, canal, estado, ciudad, siglas,Proveedor_idProveedor) VALUES ("' .
 
       $lastRow[1] .'","' .
       $lastRow[2] .'","' .
@@ -163,27 +163,27 @@ function searchRadio(){
 
 
 
-    $_SESSION['searchMethod'] = 'estacion';
+    $_SESSION['searchMethod'] = 'canal';
     $_SESSION['searchText'] = '';
 
-    searchRadios();
+    searchTelevisiones();
 
 
   }
-  function goToRadio(){
-    $_SESSION['searchMethod'] = 'idRadio';
-    $_SESSION['searchText'] = $_POST['idRadio'];
+  function goToTelevision(){
+    $_SESSION['searchMethod'] = 'idTelevision';
+    $_SESSION['searchText'] = $_POST['idTelevision'];
 
-    $_SESSION['idRadio'] = $_POST['idRadio'];
+    $_SESSION['idTelevision'] = $_POST['idTelevision'];
 
-    header("Location: /bdd-pautas/html/tarifaradio.php");
+    header("Location: /bdd-pautas/html/tarifatelevision.php");
     exit();
   }
   function getAllProveedores(){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,
 
-    $idRadio,
-    $estacionRadio;
+    $idTelevision,
+    $canalTelevision;
 
   // Get all Proveedores
   $sqlFrom = 'proveedores';

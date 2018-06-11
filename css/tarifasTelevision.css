@@ -1,0 +1,104 @@
+h1{
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 10px;
+  color: white;
+}
+a{
+  text-decoration: none;
+  color: white;
+}
+.bigTableContainer{
+  overflow:auto;
+  height:80%;
+}
+.tableTelevisiones {
+  width: 100%;
+  align-content: center;
+
+}
+.tableTelevisionesSQL{
+  width: 90%;
+  position: relative;
+  font-family: sans-serif;
+  font-size: 24;
+  padding: 10px;
+  margin:auto;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  align-items: center;
+}
+.tableTelevisionesSQL tbody{
+  overflow:auto;
+}
+.tableTelevisiones input[type=button], input[type=submit]{
+  background-color: grey;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 2px;
+}
+.tableTelevisiones input[type=text]{
+  padding: 10px;
+  border-radius: 3px;
+  border-color: grey;
+}
+
+.trTableTelevisiones td{
+  margin: 0 auto;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-bottom:1px solid grey;
+}
+.trTableTop td{
+  margin: 0 auto;
+  border-bottom:2px solid rgba(25,25,25);
+}
+.trTitleTable td{
+  margin: 0 auto;
+  padding: 0 100px 0 0;
+}
+.trTitleTable tr, .trTableTelevisiones tr, .trTableTop tr{
+  margin: 0 auto;
+  width: 100%;
+}
+.trTable,
+.trTableTelevisiones{
+    background-color: none;
+    transition:0.2s ease;
+}
+.trTable:hover,
+.trTableTelevisiones:hover{
+    background-color: rgba(204,204,204);
+    transition:0.2s ease;
+    cursor: pointer;
+
+}
+.actualizarInput input[type='button']{
+  background-color: grey;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+  right:    10px;
+  bottom:   10px;
+  position: fixed;
+}
+input[type=button]:hover, .tableTelevisiones input[type=submit]:hover{
+  background-color: rgba(10,10,10);
+}
+input[type='button']{
+  border-width: 0;
+}
+input[type='time']{
+  border:0;
+  width: 100%;
+  height: 100%;
+  content-align: center;
+}

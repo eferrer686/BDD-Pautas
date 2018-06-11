@@ -119,19 +119,21 @@ function pautasCliente(){
            "</td> ";
         }
 
-        echo
-        "<tr class='trTablePautas'id=editable>".
-         "<td class='idCliente'>".
-         "</td><td class='nombre' contenteditable=true>".
-         "</td><td class='invTotal'>".
 
-         "</td></tr> ";
-      echo"</table></div>";
 
   } else{
     unset($_SESSION['searchMethod']);
     unset($_SESSION['searchText']);
   }
+  echo
+  "<tr class='trTablePautas'id=editable>".
+   "<td class='idCliente'>".
+   "</td><td class='nombre' contenteditable=true>".
+   "</td><td class='invTotal'>".
+
+   "</td></tr> ";
+
+echo"</table></div>";
   mysqli_close($con);
 
 }
