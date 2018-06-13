@@ -98,6 +98,7 @@ function pautasCliente(){
   echo
       "<tr class='trTableTop'><td>ID
       </td><td>Nombre
+      </td><td>Tipo
       </td><td>Inversión Total
       </td></tr>
        ";
@@ -115,6 +116,7 @@ function pautasCliente(){
            "<tr class='trTablePautas'id=editable>
            <td class='idCliente'>" . $row['idPauta'] .
            "</td><td class='nombre' contenteditable=true>" . $row['nombre'] .
+           "</td><td class='tipo'><select id='sel".$row['idPauta']."'>" . setSelect($row['tipo'],$row['idPauta']) .
            "</td><td class='invTotal'>" . $row['invTotal'] .
            "</td> ";
         }
@@ -129,6 +131,7 @@ function pautasCliente(){
   "<tr class='trTablePautas'id=editable>".
    "<td class='idCliente'>".
    "</td><td class='nombre' contenteditable=true>".
+   "</td><td class='tipo'><select id='sel'>" . setSelect(0,"") .
    "</td><td class='invTotal'>".
 
    "</td></tr> ";
@@ -151,6 +154,10 @@ function updateSQLTablePautas(){
         $updateValue = $newTable[$i][1];
         sqlUpdate();
 
+        $updateName = 'tipo';
+        $updateValue = $newTable[$i][2];
+        sqlUpdate();
+
       }
 
       if($newTable[count($newTable)-1][1]!=''){
@@ -169,10 +176,11 @@ function addPauta($lastRow){
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
 
-  $sql = '  INSERT INTO pauta (Cliente_idCliente, nombre)  VALUES ("' .
+  $sql = '  INSERT INTO pauta (Cliente_idCliente, nombre, tipo)  VALUES ("' .
 
     $_SESSION['idCliente'] .'","' .
-    $lastRow[1] .'")';
+    $lastRow[1].'","' .
+    $lastRow[2] .'")';
 
 
 
@@ -181,8 +189,20 @@ function addPauta($lastRow){
   mysqli_close($con);
 
 
-
-
-
 }
+function setSelect($tipo,$id){
+  $r='';
+  $r = $r.
+  "<option value='1'>radio</option>".
+  "<option value='2'>television</option>".
+  "<option value='3'>espectacular</option>";
+
+  if($tipo!=0){
+      $r = $r.
+      "<script>
+          document.getElementById('sel".$id."').selectedIndex = ".($tipo-1).";
+      </script>";
+  }
+  return $r;
+  }
 ?>

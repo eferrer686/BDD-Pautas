@@ -1,0 +1,102 @@
+h1{
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 10px;
+  color: white;
+}
+a{
+  text-decoration: none;
+  color: white;
+}
+select{
+  width: 100%;
+}
+.topHTMLTable{
+  width: 100%;
+}
+.setDates p{
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 10px;
+  color: white;
+  text-align: center;
+}
+
+.tablePautas td{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 13;
+
+}
+.tablePautas{
+  width: 90%;
+  position: relative;
+  font-family: sans-serif;
+  padding: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  align-items: center;
+  margin: auto;
+}
+.tablePautas a{
+  font-family: sans-serif;
+  color: black;
+}
+.tablePautasHeaders td{
+  margin: 0 auto;
+  border-bottom:2px solid rgba(25,25,25);
+  background-color: none;
+  transition:0.2s ease;
+}
+.tablePautasHeaders td:hover{
+    background-color: rgba(204,204,204);
+    transition:0.2s ease;
+    cursor: pointer;
+}
+.fechasHeader,.fechasHeader:hover{
+  cursor:auto !important;
+  background-color: none !important;
+}
+.pautaIndividual td{
+  border-bottom:1px solid grey;
+}
+.calendar{
+  display: block;
+  overflow-x: auto;
+  width: 50vw;
+}
+.month{
+  border-left: 1px solid grey;
+  border-right:1px solid grey;
+  text-align: center;
+}
+.day{
+  transition:0.2s ease;
+  background-color: none;
+  text-align: center;
+  border: 1px solid black;
+  min-width: 28px;
+  min-height: 28px;
+}
+.day:hover{
+    background-color: rgba(204,204,204);
+    transition:0.2s ease;
+    cursor: pointer;
+}
+
+input[type=button], input[type=submit]{
+  background-color: grey;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+input[type=date]{
+ padding: 10px;
+ border-radius: 3px;
+ border-color: grey;
+}

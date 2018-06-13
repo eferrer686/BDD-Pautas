@@ -14,8 +14,14 @@ $(document).ready(function() {
       var idPauta = row.cells[0].innerHTML.replace('<br>', '');
       var nombre = row.cells[1].innerHTML.replace('<br>', '');
 
+      var sel = row.cells[2].childNodes[0];
+      var opt = sel.options[sel.selectedIndex];
+      var tipo = opt.value;
+
+
       sqlRow[0]= idPauta;
       sqlRow[1]= nombre;
+      sqlRow[2]= tipo;
 
 
       sqlTable[i-1]=sqlRow;

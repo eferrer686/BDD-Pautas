@@ -4,5 +4,6 @@ body{
     background-image: url(../images/integracion21.jpg);
     background-size:cover;
     background-repeat:  no-repeat;
-    background-position: center ;
+    background-position: 50% 50%;
+    background-attachment: fixed ;
 }

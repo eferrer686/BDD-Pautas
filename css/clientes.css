@@ -134,3 +134,6 @@ input[type=button]:hover, .tableClientes input[type=submit]:hover{
 .clienteInfo{
   width: 100%;
 }
+select{
+  width: 100%;
+}
