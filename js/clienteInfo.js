@@ -18,16 +18,19 @@ $(document).ready(function() {
       var opt = sel.options[sel.selectedIndex];
       var tipo = opt.value;
 
+      var presupuesto = row.cells[3].innerHTML.replace('<br>', '');
+
 
       sqlRow[0]= idPauta;
       sqlRow[1]= nombre;
       sqlRow[2]= tipo;
+      sqlRow[3]= presupuesto;
 
 
       sqlTable[i-1]=sqlRow;
 
     }
-
+    // console.log(sqlTable);
     $(".tablaSQLPautas").val(JSON.stringify(sqlTable));
     $(".actualizarInput").submit();
   });

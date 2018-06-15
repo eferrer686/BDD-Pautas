@@ -99,6 +99,7 @@ function pautasCliente(){
       "<tr class='trTableTop'><td>ID
       </td><td>Nombre
       </td><td>Tipo
+      </td><td>Presupuesto
       </td><td>Inversión Total
       </td></tr>
        ";
@@ -114,9 +115,10 @@ function pautasCliente(){
         {
           echo
            "<tr class='trTablePautas'id=editable>
-           <td class='idCliente'>" . $row['idPauta'] .
+           <td class='idPauta'>" . $row['idPauta'] .
            "</td><td class='nombre' contenteditable=true>" . $row['nombre'] .
            "</td><td class='tipo'><select id='sel".$row['idPauta']."'>" . setSelect($row['tipo'],$row['idPauta']) .
+           "</td><td class='presupuesto' contenteditable=true>" . $row['presupuesto'] .
            "</td><td class='invTotal'>" . $row['invTotal'] .
            "</td> ";
         }
@@ -129,9 +131,10 @@ function pautasCliente(){
   }
   echo
   "<tr class='trTablePautas'id=editable>".
-   "<td class='idCliente'>".
+   "<td class='idPauta'>".
    "</td><td class='nombre' contenteditable=true>".
    "</td><td class='tipo'><select id='sel'>" . setSelect(0,"") .
+   "</td><td class='presupuesto'contenteditable=true>".
    "</td><td class='invTotal'>".
 
    "</td></tr> ";
@@ -158,6 +161,10 @@ function updateSQLTablePautas(){
         $updateValue = $newTable[$i][2];
         sqlUpdate();
 
+        $updateName = 'presupuesto';
+        $updateValue = $newTable[$i][3];
+        sqlUpdate();
+
       }
 
       if($newTable[count($newTable)-1][1]!=''){
@@ -176,11 +183,12 @@ function addPauta($lastRow){
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
 
-  $sql = '  INSERT INTO pauta (Cliente_idCliente, nombre, tipo)  VALUES ("' .
+  $sql = '  INSERT INTO pauta (Cliente_idCliente, nombre, tipo, presupuesto)  VALUES ("' .
 
     $_SESSION['idCliente'] .'","' .
     $lastRow[1].'","' .
-    $lastRow[2] .'")';
+    $lastRow[2].'","' .
+    $lastRow[3] .'")';
 
 
 

@@ -1,7 +1,7 @@
 <?php
     //include '../php/sqlPHP.php';
     include '../php/gui.php';
-
+    
 ?>
 <html>
 <head>
@@ -19,7 +19,7 @@
 
 </head>
 
-<body onload="displayTable()">
+<body>
   <table class="topHTMLTable">
   <td>
     <h1>Pautas</h1>
@@ -30,23 +30,51 @@
         <p>Desde:</p>
       </td>
       <td>
-        <input type="date" name="begin" value="" id = "begin" onchange="displayCalendar()">
+        <input type="date" name="begin" value="" class="begin" id = "begin">
       </td>
       <td>
         <p>Hasta:</p>
       </td>
       <td>
-        <input type="date" name="finish" value="" id = "finish" onchange="displayCalendar()">
+        <input type="date" name="finish" value="" class="begin" id = "finish">
       </td>
     </table>
   </td>
 </table>
 
   <!-- Table Pautas -->
-  <div class="pautas" id = "pautas">
+  <div class="pautas" id = "pautas"></div>
   <!-- Table Pautas -->
 
+  <!-- Modal de Fecha -->
+  <!-- The Modal -->
+<!-- <div id=myModal class=modal>
+
+  <div class=modal-content>
+    <span class=close>&times;</span>
+    <table>
+      <tr>
+      <td>
+        <p>Numero de spots:</p>
+      </td>
+      <td>
+        <input type=number name=numSpots value=''>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>Tipo de Spot:</p>
+      </td>
+      <td>
+        <input type=text name=tipoSpot value=''>
+      </td>
+    </tr>
+  </table>
+  <input type=button name=AceptarSpot value=Aceptar>
   </div>
+
+</div> -->
+
 
 
 </body>

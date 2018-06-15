@@ -58,8 +58,14 @@ select{
   cursor:auto !important;
   background-color: none !important;
 }
-.pautaIndividual td{
+.completeDayTable td{
   border-bottom:1px solid grey;
+
+}
+.completeDay {
+  border-left: 1px solid grey;
+  border-right:1px solid grey;
+  align: center;
 }
 .calendar{
   display: block;
@@ -70,19 +76,30 @@ select{
   border-left: 1px solid grey;
   border-right:1px solid grey;
   text-align: center;
+  min-width: 100px;
 }
-.day{
+.monthTd{
+  border-bottom:1px solid grey;
+}
+.completeDay{
   transition:0.2s ease;
   background-color: none;
   text-align: center;
-  border: 1px solid black;
-  min-width: 28px;
-  min-height: 28px;
+  /* border: 1px solid black; */
+
 }
-.day:hover{
+.completeDay:hover{
     background-color: rgba(204,204,204);
     transition:0.2s ease;
     cursor: pointer;
+}
+.day{
+  min-width: 28px;
+  min-height: 28px;
+  text-align: center;
+}
+.numSpots{
+  text-align: center;
 }
 
 input[type=button], input[type=submit]{
@@ -99,4 +116,55 @@ input[type=date]{
  padding: 10px;
  border-radius: 3px;
  border-color: grey;
+}
+/* Pautas Modals */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal input[type=button]{
+  position:relative;
+  top: 50px;
+
+}
+
+/* Modal Content */
+.modal-content {
+    top: 100px;
+    border-radius: 10px;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    /* border: 1px solid #888; */
+    width: 330px;
+    height:400px;
+    text-align: center;
+}
+.modal-content p{
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 20px;
+  color: grey;
+}
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
