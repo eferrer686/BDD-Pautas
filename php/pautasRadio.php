@@ -472,22 +472,8 @@ function setPautasRadio(){
     //   $updateName = 'estacion';
     //   $updateValue = $newTable[$i][1];
     //   sqlUpdate();
-    }
-
-
-    if($newTable[count($newTable)-1][1]!=''){
-        addRadio($newTable[count($newTable)-1]);
-    }else{
-
-      $result = mysqli_query($con,$sql);
-      mysqli_close($con);
-
-      $_SESSION['searchMethod'] = 'estacion';
-      $_SESSION['searchText'] = '';
-
-      searchRadios();
-    }
-
   }
+
+
 
 ?>
