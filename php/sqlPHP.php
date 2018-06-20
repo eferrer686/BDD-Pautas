@@ -94,15 +94,33 @@ function sqlSearch(){
 
 
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '%".$searchText."%' and idUser = ".$_SESSION['idUser'];
-    // echo '<script language="javascript">';
-    // echo 'alert("'.$sql.'")';
-    // echo '</script>';
+
+
     $result = mysqli_query($con,$sql);
 
 
 
 }
+function sqlSearchSpecific($sqlFrom,$searchMethod,$searchText){
 
+    global $servername, $username, $password, $dbname, $user, $pwd, $result,$con,$row;
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno())
+      {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+
+
+    $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '%".$searchText."%' and idUser = ".$_SESSION['idUser'];
+
+    $result = mysqli_query($con,$sql);
+
+
+
+}
 
 
 function tableClientes(){
@@ -204,5 +222,9 @@ function checkLogin(){
     header("Location: /bdd-pautas/index.php");
   }
 }
-
+function logjs($log){
+  echo '<script language="javascript">';
+  echo 'console.log("'.$log.'")';
+  echo '</script>';
+}
 ?>

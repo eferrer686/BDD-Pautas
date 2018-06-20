@@ -1,7 +1,8 @@
 <?php
-    //include '../php/sqlPHP.php';
+    include '../php/sqlPHP.php';
     include '../php/gui.php';
-    
+    include '../php/pautasRadio.php';
+
 ?>
 <html>
 <head>
@@ -9,7 +10,6 @@
 <script src="../js/jquery-3.3.1.min.js"></script>
 <script src="../js/pautasRadio.js"></script>
 <title> Pautas </title>
-
 <?php topnav(); ?>
 <link rel="stylesheet" type="text/css" href="../css/pautasRadio.css">
 <link rel="stylesheet" type="text/css" href="../css/background.css">
@@ -19,10 +19,9 @@
 
 </head>
 
-<body>
-  <table class="topHTMLTable">
+<body><table class="topHTMLTable">
   <td>
-    <h1>Pautas</h1>
+    <h1>Pautas de <?php printPautaNombre(); ?></h1>
   </td>
   <td>
     <table class="setDates">
@@ -43,7 +42,7 @@
 </table>
 
   <!-- Table Pautas -->
-  <div class="pautas" id = "pautas"></div>
+  <div class="pautas" id = "pautas"><?php setTablePautas(); ?></div>
   <!-- Table Pautas -->
 
   <!-- Modal de Fecha -->

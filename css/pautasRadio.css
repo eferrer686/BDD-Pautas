@@ -70,7 +70,7 @@ select{
 .calendar{
   display: block;
   overflow-x: auto;
-  width: 50vw;
+  width: 30vw;
 }
 .month{
   border-left: 1px solid grey;
@@ -134,7 +134,14 @@ input[type=date]{
 .modal input[type=button]{
   position:relative;
   top: 50px;
+  transition:0.2s ease;
 
+}
+.modal input[type=button]:hover{
+  position:relative;
+  top: 50px;
+  background-color: rgba(70,70,70,1);
+  transition:0.2s ease;
 }
 
 /* Modal Content */

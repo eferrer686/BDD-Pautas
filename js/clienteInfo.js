@@ -1,9 +1,27 @@
 $(document).ready(function() {
   $(".trTablePautas").dblclick(function(){
-    var idPauta = $(this).find(".idPauta").text();
 
-    $(".idPautaText").val(idPauta);
+    var table = $(this);
+
+    var sqlTable=[];
+
+
+    var sqlRow=[];
+    var idPauta = table[0].cells[0].innerHTML.replace('<br>', '');
+    var nombre = table[0].cells[1].innerHTML.replace('<br>', '');
+    var sel = table[0].cells[2].childNodes[0];
+    var opt = sel.options[sel.selectedIndex];
+    var tipo = opt.value;
+
+    sqlTable[0] = idPauta;
+    sqlTable[1] = nombre;
+    sqlTable[2] = tipo;
+
+
+    // console.log(sqlTable);
+    $(".idPautaText").val(JSON.stringify(sqlTable));
     $(".formPautaInfo").submit();
+
   });
 
   $(".actualizarButton").click(function(){

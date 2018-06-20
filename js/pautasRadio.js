@@ -1,6 +1,4 @@
 $(document).ready(function() {
-  displayTable();
-
 
   $(".begin").change(function() {
     displayTable();
@@ -12,6 +10,7 @@ $(document).ready(function() {
     setDaysModals();
 
   });
+
 
   setDaysModals();
 
@@ -75,106 +74,8 @@ const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
 ];
 function displayTable(){
-  var html ="<table class=tablePautas>"+
-  "<tr class=tablePautasHeaders>"+
-    "<td>"+
-      "<a>ID</a>"+
-    "</td>"+
-    "<td>"+
-      "<p>Plaza</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Estacion/TV</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Frecuencia/Canal</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Siglas</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Hora</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Tarifa</p>"+
-    "</td>"+
-    "<td class=fechasHeader>"+
-      "<p>Fechas</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Spots</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Inversion</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Rating</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>GRP's</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Impactos</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Inversion</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Comision</p>"+
-    "</td>"+
-  "</tr>";
-  html += "<tr class='pautaIndividual'>"+
-    "<td>"+
-      "<p>ID</select>"+
-    "</td>"+
-    "<td>"+
-      "<select id='plazaSelect'>Plaza</select>"+
-    "</td>"+
-    "<td>"+
-      "<select id='estacionSelect'>Estacion/TV</select>"+
-    "</td>"+
-    "<td>"+
-      "<select id='frecuenciaSelect'>Frecuencia/Canal</select>"+
-    "</td>"+
-    "<td>"+
-      "<select id='siglasSelect'>Siglas</select>"+
-    "</td>"+
-    "<td>"+
-      "<select id='horaSelect'>Hora</select>"+
-    "</td>"+
-    "<td>"+
-      "<select id='tarifaSelect'>Tarifa</select>"+
-    "</td>"+
-    "<td class=innerTD>"+
-      "<div  id=calendar class=calendar></div>"+
-    "</td>"+
-    "<td>"+
-      "<p>Spots</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Inversion</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Rating</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>GRP's</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Impactos</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Inversion</p>"+
-    "</td>"+
-    "<td>"+
-      "<p>Comision</p>"+
-    "</td>"+
-  "</tr>";
 
 
-
-
-  document.getElementById("pautas").innerHTML = html;
   displayCalendar();
 
 }
@@ -199,7 +100,7 @@ function displayCalendar(){
     // console.log("Month: "+month+" begin.getMonth(): "+ begin.getMonth());
     if(begin.getMonth() == month){
       innerHTML += "<td class='completeDay'><table class='completeDayTable'><tr><td class='day'>" + begin.getDate() + "<input type='date' id='date' name='date' value='"+ dateToInput(begin) +"' hidden='true'></td></tr>" ;
-      innerHTML += "<tr><td class='numSpots'}'>0</td></tr></table></td>" ;
+      innerHTML += "<tr><td class='numSpots'}'>"+0+"</td></tr></table></td>" ;
       begin.setDate(begin.getDate() + 1);
 
     }else{
@@ -249,4 +150,17 @@ function displayCalendar(){
     for(i=0; i<rows.length; i++){
      rows[i].innerHTML=innerHTML
     }
+}
+//Cambios en la tabla
+function estadosChange(value){
+  $.ajax({
+   type: "POST",
+   url: '../php/pautasRadio.php',
+   data: {estadoChange: value.value.toString()
+   ,parentID: value.parentNode.parentNode.id.toString()},
+   async: true,
+   success: function(response) {
+     console.log(response);
+   }
+  });
 }

@@ -3,6 +3,10 @@ if(isset($_POST['tablaSQLPautas'])){
     $_SESSION['tablaSQL'] = json_decode($_POST['tablaSQLPautas']);
     updateSQLTablePautas();
 }
+if(isset($_POST['idPauta'])){
+  $_SESSION['idPauta'] = json_decode($_POST['idPauta']);
+  goToPautas();
+}
 
 function setAll(){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,
@@ -212,5 +216,28 @@ function setSelect($tipo,$id){
       </script>";
   }
   return $r;
+  }
+  function goToPautas(){
+
+    $table = $_SESSION['idPauta'];
+    $idPauta = $table[0];
+    $tipo = $table[2];
+
+
+    if ($tipo == 1) {
+      $_SESSION['idPauta']=$idPauta;
+      header("Location: /bdd-pautas/html/pautasRadio.php");
+      exit();
+    }elseif ($tipo == 2) {
+      echo '<script language="javascript">';
+      echo 'alert("Es tv")';
+      echo '</script>';
+    }
+    elseif ($tipo == 3) {
+      echo '<script language="javascript">';
+      echo 'alert("Es espectacular")';
+      echo '</script>';
+    }
+
   }
 ?>
