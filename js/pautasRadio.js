@@ -155,12 +155,24 @@ function displayCalendar(){
 function estadosChange(value){
   $.ajax({
    type: "POST",
-   url: '../php/pautasRadio.php',
-   data: {estadoChange: value.value.toString()
-   ,parentID: value.parentNode.parentNode.id.toString()},
+   url: '../html/pautasRadio.php',
+   data: {estadoID: value.childNodes[0].value.toString()},
    async: true,
    success: function(response) {
-     console.log(response);
+    response = JSON.parse(response);
+
+    var t ='';
+
+    for(var i = 0; i<response.length;i++){
+     t+="<option value='"+ response[i]['idciudad'] +"'>"
+     + response[i]['ciudad'] +"</option>";
+    }
+
+    /* Remove all options from the select list */
+    var select = $(value.parentNode).find('.ciudad').children().first();
+    select.empty().append(t);
+
+
    }
   });
 }

@@ -94,7 +94,7 @@ function sqlSearch(){
 
 
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '%".$searchText."%' and idUser = ".$_SESSION['idUser'];
-
+    // logjs($sql);
 
     $result = mysqli_query($con,$sql);
 
@@ -103,7 +103,7 @@ function sqlSearch(){
 }
 function sqlSearchSpecific($sqlFrom,$searchMethod,$searchText){
 
-    global $servername, $username, $password, $dbname, $user, $pwd, $result,$con,$row;
+    global $servername, $username, $password, $dbname, $user, $pwd,$con,$row;
 
     $con = mysqli_connect($servername, $username, $password, $dbname);
 
@@ -115,13 +115,10 @@ function sqlSearchSpecific($sqlFrom,$searchMethod,$searchText){
 
 
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '%".$searchText."%' and idUser = ".$_SESSION['idUser'];
-
+    // logjs($sql);
     $result = mysqli_query($con,$sql);
-
-
-
+    return $result;
 }
-
 
 function tableClientes(){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row;

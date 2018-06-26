@@ -29,6 +29,18 @@
       </td>
     </table>
 
+    <table class="buttonsTable">
+      <tr>
+        <td>
+          <input class="nuevoEstado" type="button" name="nuevo" value="Nuevo Estado">
+        </td>
+        <td>
+          <input class="nuevaCiudad" type="button" name="nuevo" value="Nueva Ciudad">
+        </td>
+      </tr>
+    </table>
+
+
     <form class="actualizarInput" action="radios.php" method="post">
       <input type="button" name="Actualizar" value="Actualizar" class="actualizarButton">
       <input type="text" class="tablaSQLRadios" name="tablaSQLRadios" value="" hidden='true'>
@@ -36,6 +48,43 @@
 
     <?php searchRadio(); ?>
 
+
+    <!-- Modal Agregar Ciudad -->
+    <div id=modalCiudad class=modal>
+      <div class=modal-content>
+        <span class=closeCiudad>&times;</span>
+        <p>Nueva ciudad</p>
+        <table>
+          <tr>
+            <td>
+              <p>Selecciona un Estado:</p>
+            </td>
+            <td>
+              <select class="estadoDeNuevaCiudad"><?php echo selectEstados(0); ?></select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <p>Nueva  ciudad:</p>
+            </td>
+            <td>
+              <input type="text" name="ciudad" value="" class="nuevaCiudadInputText">
+            </td>
+          </tr>
+        </table>
+        <input type=button name=agregarCiudad value=Agregar class="modalButton" onclick="agregarCiudad()">
+      </div>
+    </div>
+
+    <!-- Modal Agregar Estado -->
+    <div id=modalEstado class=modal>
+      <div class=modal-content>
+        <span class=closeEstado>&times;</span>
+        <p>Nuevo Estado</p>
+        <input type="text" name="estado" value="" class="nuevoEstadoInputText">
+        <input type=button name=agregarEstado value=Agregar class="modalButton" onclick="agregarEstado()">
+      </div>
+    </div>
 
   </body>
   <footer>

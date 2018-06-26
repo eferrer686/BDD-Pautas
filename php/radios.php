@@ -2,9 +2,10 @@
 
 $idRadio = '';
 $estacionRadio = '';
+$tablaEstados ='';
 
 if(isset($_POST['Buscar'])){
-    searchRadios();
+  searchRadios();
 }
 if(isset($_POST['idRadio'])){
   goToRadio();
@@ -12,10 +13,20 @@ if(isset($_POST['idRadio'])){
 if(isset($_POST['tablaSQLRadios'])){
 
     $_SESSION['tablaSQL'] = json_decode($_POST['tablaSQLRadios']);
-
     updateSQLTable();
 }
-
+//Ajax change of Estado
+if(isset($_POST['estadoID'])){
+  estadoChange($_POST['estadoID']);
+}
+// Ajax add estadoNuevo
+if(isset($_POST['estadoNuevo'])){
+  addEstado($_POST['estadoNuevo']);
+}
+// Ajax add ciudadNueva
+if(isset($_POST['ciudadNueva'])){
+  addCiudad($_POST['ciudadNueva'],$_POST['idEstadoDeNuevaCiudad']);
+}
 function searchRadios(){
     global $searchText;
     $_SESSION['searchMethod'] = 'estacion';
@@ -24,7 +35,7 @@ function searchRadios(){
 }
 
 function searchRadio(){
-    global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,
+    global $servername, $username, $password, $searchText,$dbname, $user, $pwd, $con,$row,
 
     $idRadio,
     $estacionRadio;
@@ -32,7 +43,6 @@ function searchRadio(){
     $tablaProveedores = getAllProveedores();
 
     $sqlFrom = 'radios';
-    $searchMethod = 'estacion';
 
     echo '<div class="bigTableContainer"> <table class="tableRadiosSQL" id="tableRadiosSQL">';
     echo
@@ -47,24 +57,32 @@ function searchRadio(){
          ";
    if (isset($_SESSION['searchMethod'])){
        $searchMethod=$_SESSION['searchMethod'];
-   }
+   }else{$searchMethod='estacion';}
    if (isset($_SESSION['searchText'])){
        $searchText=$_SESSION['searchText'];
-   }
-    sqlSearch();
+   }else{$searchText='';}
+    $result = sqlSearchSpecific( $sqlFrom,$searchMethod, $searchText);
 
     if($result != null){
         while($row = mysqli_fetch_array($result))
           {
+            $idEstado = $row['idestado'];
+            $idCiudad = $row['idciudad'];
+            $frecuencia = $row['frecuencia'];
+            $siglas = $row['siglas'];
+            $idProveedor = $row['idProveedor'];
+
+            logjs($idProveedor ." - ". $row['idRadio']);
+
             echo
              "<tr class='trTableRadios'id=editable>
              <td class='idRadio'>" . $row['idRadio'] .
              "</td><td class='estacion' contenteditable=true>" . $row['estacion'] .
-             "</td><td class='estado' contenteditable=true>" . $row['estado'] .
-             "</td><td class='ciudad' contenteditable=true>" . $row['ciudad'] .
-             "</td><td class='frecuencia'contenteditable=true>" . $row['frecuencia'] .
-             "</td><td class='siglas' contenteditable=true>" . $row['siglas'] .
-             "</td><td class='proveedor'><select id='sel'>" . setSelect($row['idProveedor'], $tablaProveedores) .
+             "</td><td class='estado' onchange = estadosChange(this) ><select>" . selectEstados($idEstado) ."</select>".
+             "</td><td class='ciudad'><select>" . selectCiudades($idCiudad,$idEstado) ."</select>".
+             "</td><td class='frecuencia'contenteditable=true>" . $frecuencia .
+             "</td><td class='siglas' contenteditable=true>" . $siglas .
+             "</td><td class='proveedor'><select id='sel'>" . setSelectProveedor($idProveedor, $tablaProveedores) .
              "</select></td></tr>";
 
           }
@@ -73,11 +91,11 @@ function searchRadio(){
           "<tr class='trTableRadios'id=editable>".
            "<td class='idRadio'>".
            "</td><td class='estacion' contenteditable=true>".
-           "</td><td class='estado' contenteditable=true>".
-           "</td><td class='ciudad' contenteditable=true>".
+           "</td><td class='estado'><select>" . selectEstados(0) ."</select>".
+           "</td><td class='ciudad'><select>" . selectCiudades(0,0) ."</select>".
            "</td><td class='frecuencia'contenteditable=true>".
            "</td><td class='siglas' contenteditable=true>".
-           "</td><td class='proveedor'><select>".setSelect(0,$tablaProveedores)."</select>".
+           "</td><td class='proveedor'><select>".setSelectProveedor(0,$tablaProveedores)."</select>".
            "</td> ";
 
         echo"</table></div>";
@@ -93,22 +111,24 @@ function searchRadio(){
 
 
     global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple;
-    $tableID = 'idRadio';
-    $sqlFrom = 'radio';
 
     $newTable = $_SESSION['tablaSQL'];
     for ($i=0; $i < count($newTable)-1; $i++) {
+
+      $tableID = 'idRadio';
+      $sqlFrom = 'radio';
+
       $idTuple = $newTable[$i][0];
 
       $updateName = 'estacion';
       $updateValue = $newTable[$i][1];
       sqlUpdate();
-      $updateName = 'estado';
-      $updateValue = $newTable[$i][2];
-      sqlUpdate();
-      $updateName = 'ciudad';
+
+
+      $updateName = 'ciudad_idciudad';
       $updateValue = $newTable[$i][3];
       sqlUpdate();
+
       $updateName = 'frecuencia';
       $updateValue = $newTable[$i][4];
       sqlUpdate();
@@ -206,7 +226,7 @@ function searchRadio(){
 
 
 
-  function setSelect($idProveedor,$tablaProveedores){
+  function setSelectProveedor($idProveedor,$tablaProveedores){
     $r='';
     for ($i=0; $i < count($tablaProveedores); $i++) {
       if($tablaProveedores[$i]['idProveedor'] == $idProveedor){
@@ -224,5 +244,157 @@ function searchRadio(){
       return $r;
 
     }
+  function selectEstados($idEstado){
+    global $tablaEstados;
 
+    setTablaEstados($idEstado);
+
+    $r='';
+    for ($j=0; $j < count($tablaEstados); $j++) {
+      if($tablaEstados[$j]['idestado'] == $idEstado){
+        $r = $r.
+        "<option value='". $tablaEstados[$j]['idestado'] ."' selected='selected'>"
+        .  $tablaEstados[$j]['estado'].
+        "</option>";}
+      else{
+        $r = $r.
+        "<option value='". $tablaEstados[$j]['idestado'] ."'>"
+        . $tablaEstados[$j]['estado'] ."</option>";
+
+        }
+      }
+      return $r;
+  }
+
+  function setTablaEstados($idEstado){
+    global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
+    $tablaEstados;
+
+    // Buscar Tabla Relacional
+    $sqlFrom = 'estados';
+    $searchMethod="estado";
+    $searchText = "";
+
+    $result = sqlSearchSpecific($sqlFrom,$searchMethod,$searchText);
+
+    if($result != null){
+      $i=0;
+        while($row = mysqli_fetch_array($result))
+          {
+            $tablaEstados[$i]=$row;
+            $i=$i+1;
+          }
+    }
+  }
+
+  function estadoChange($estado){
+
+    global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
+    $tablaEstados;
+
+    $sqlFrom = 'ciudades';
+    $searchMethod="idestado";
+    $searchText = $estado;
+
+    $result = sqlSearchSpecific($sqlFrom,$searchMethod,$searchText);
+
+    $r='';
+
+    if($result != null){
+      $i=0;
+        while($row = mysqli_fetch_array($result))
+          {
+            $r[$i]['idciudad'] = $row['idciudad'];
+            $r[$i]['ciudad'] = $row['ciudad'];
+
+            $i=$i+1;
+          }
+    }
+    echo json_encode($r);
+    exit();
+  }
+  function selectCiudades($idCiudad,$idEstado){
+    global $tablaCiudades;
+
+    setTablaCiudades($idCiudad,$idEstado);
+
+    $r='';
+    for ($j=0; $j < count($tablaCiudades); $j++) {
+      if($tablaCiudades[$j]['idciudad'] == $idCiudad){
+        $r = $r.
+        "<option value='". $tablaCiudades[$j]['idciudad'] ."' selected='selected'>"
+        .  $tablaCiudades[$j]['ciudad'].
+        "</option>";}
+      else{
+        $r = $r.
+        "<option value='". $tablaCiudades[$j]['idciudad'] ."'>"
+        . $tablaCiudades[$j]['ciudad'] ."</option>";
+
+        }
+      }
+      return $r;
+  }
+
+  function setTablaCiudades($idCiudad,$idEstado){
+    global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
+    $tablaCiudades;
+
+    // Buscar Tabla Relacional
+    $sqlFrom = 'ciudades';
+    $searchMethod="idestado";
+    $searchText = $idEstado;
+
+    $result = sqlSearchSpecific($sqlFrom,$searchMethod,$searchText);
+
+    if($result != null){
+      $i=0;
+        while($row = mysqli_fetch_array($result))
+          {
+            $tablaCiudades[$i]=$row;
+            $i=$i+1;
+          }
+    }
+  }
+
+
+// Add estado
+function addEstado($estado){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+  $sql = "INSERT INTO estado (estado, user_iduser) VALUES ('".
+     $estado."', '".
+    $_SESSION['idUser'] ."')";
+
+  $result = mysqli_query($con,$sql);
+
+
+  exit();
+}
+function addCiudad($ciudad,$idEstado){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+  $sql = "INSERT INTO ciudad (ciudad, estado_idestado) VALUES ('".
+    $ciudad ."', '".
+    $idEstado ."')";
+
+  $result = mysqli_query($con,$sql);
+
+  exit();
+}
 ?>
