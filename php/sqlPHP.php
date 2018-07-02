@@ -119,6 +119,20 @@ function sqlSearchSpecific($sqlFrom,$searchMethod,$searchText){
     $result = mysqli_query($con,$sql);
     return $result;
 }
+function sqlSearchSpecificQuery($sql){
+
+    global $servername, $username, $password, $dbname, $user, $pwd,$con,$row;
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno())
+      {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+    $result = mysqli_query($con,$sql);
+    return $result;
+}
 
 function tableClientes(){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row;

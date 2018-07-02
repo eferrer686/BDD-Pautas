@@ -29,8 +29,6 @@ function setDaysModals(){
   $(".completeDay").click(function(){
     var date = inputToDate($(this).find("[name=date]").val());
 
-
-
     // -----------------------------------------------------------------------------
     // Modals Management
     // -----------------------------------------------------------------------------
@@ -60,12 +58,30 @@ function setDaysModals(){
             modal.style.display = "none";
         }
     }
+
     document.getElementById("modalDate").valueAsDate = date;
     month = date.getMonth();
     day = date.getDate();
     year = date.getFullYear();
     var textDate = '<p style="text-align:center">'+day+' - '+monthNames[month]+' - '+year+'</p>';
     document.getElementById("textDate").innerHTML = textDate;
+
+    var id = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id;
+
+    $.ajax({
+     type: "POST",
+     url: '../html/pautasRadio.php',
+     data: {getSpotsDia: 1,diaSpot: day, mesSpot: month,añoSpot: year, idPautaRenglon: id},
+     async: true,
+     success: function(response) {
+       var modalTable = document.getElementById('modal-table');
+
+       var tableHTML = JSON.parse(response);
+
+       modalTable.innerHTML = tableHTML;
+
+     }
+    });
 
 
   });
@@ -75,11 +91,15 @@ const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
 ];
 function displayTable(){
 
-
   displayCalendar();
 
 }
 function displayCalendar(){
+
+  // set the content of div .
+  var rows = document.getElementsByClassName("calendar");
+
+  for(i=0; i<rows.length; i++){
 
   var b = document.getElementById("begin").value.split(/\D/);
   var begin = new Date(b[0], --b[1], b[2]);
@@ -87,7 +107,10 @@ function displayCalendar(){
   var finish = new Date(b[0], --b[1], b[2]);
 
   var innerHTML="";
-  innerHTML += "<table class='calendar'>";
+
+  innerHTML="";
+
+  innerHTML += "<table class='innerCalendar'>";
 
   var month = begin.getMonth();
   innerHTML += "<td><table class='month' id='"+ month +"'>";
@@ -96,83 +119,105 @@ function displayCalendar(){
     innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " +begin.getFullYear() +"</td></tr><tr>";
   }
 
-  while(begin<=finish){
-    // console.log("Month: "+month+" begin.getMonth(): "+ begin.getMonth());
-    if(begin.getMonth() == month){
-      innerHTML += "<td class='completeDay'><table class='completeDayTable'><tr><td class='day'>" + begin.getDate() + "<input type='date' id='date' name='date' value='"+ dateToInput(begin) +"' hidden='true'></td></tr>" ;
-      innerHTML += "<tr><td class='numSpots'}'>"+0+"</td></tr></table></td>" ;
-      begin.setDate(begin.getDate() + 1);
 
-    }else{
-      innerHTML +="</tr></table></td>";
-      month = begin.getMonth();
-      innerHTML += "<td><table class='month' id='"+ month +"'>";
-      innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " + begin.getFullYear() +"</td></tr><tr>";
+    while(begin<=finish){
+      if(begin.getMonth() == month){
+        var id = rows[i].parentNode.parentNode.id;
+        var numSpots;
+
+        $.ajax({
+         type: "POST",
+         url: '../html/pautasRadio.php',
+         data: {getSpotsCalendar: 1,diaSpot: begin.getDate(), mesSpot: begin.getMonth(),añoSpot: begin.getFullYear(), idPautaRenglon: id},
+         async: false,
+         success: function(response) {
+           res = JSON.parse(response);
+           numSpots = res;
+         }
+        });
+
+        // console.log("Month: "+month+" begin.getMonth(): "+ begin.getMonth());
+
+        innerHTML += "<td class='completeDay'><table class='completeDayTable'><tr><td class='day'>" + begin.getDate() + "<input type='date' id='date' name='date' value='"+ dateToInput(begin) +"' hidden='true'></td></tr>" ;
+        innerHTML += "<tr><td class='numSpots'}'>"+numSpots+"</td></tr></table></td>" ;
+        begin.setDate(begin.getDate() + 1);
+
+      }else{
+        innerHTML +="</tr></table></td>";
+        month = begin.getMonth();
+        innerHTML += "<td><table class='month' id='"+ month +"'>";
+        innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " + begin.getFullYear() +"</td></tr><tr>";
+
+      }
 
     }
+    innerHTML += "</table>";
+
+
+    rows[i].innerHTML=innerHTML
   }
 
-  innerHTML += "</table>";
-  innerHTML += "<div id=myModal class=modal>"
-
-  +"<div class=modal-content>"
-  +  "<span class=close>&times;</span>"
-  +  "<table>"
-  +   "<tr>"
-  +    "<td colspan = 2 >"
-  +     "<div id='textDate'></div>"
-  +     "<input type=date name=date id=modalDate value='' hidden=true>"
-  +    "</td>"
-  +  "</tr>"
-  +    "<tr>"
-  +    "<td>"
-  +      "<p>Numero de spots:</p>"
-  +    "</td>"
-  +    "<td>"
-  +      "<input type=number name=numSpots value=''>"
-  +    "</td>"
-  +  "</tr>"
-  +  "<tr>"
-  +    "<td>"
-  +      "<p>Tipo de Spot:</p>"
-  +    "</td>"
-  +    "<td>"
-  +      "<input type=text name=tipoSpot value=''>"
-  +    "</td>"
-  +  "</tr>"
-  +"</table>"
-  +"<input type=button name=AceptarSpot value=Aceptar>"
-  +"</div>";
 
 
- // set the content of div .
- var rows = document.getElementsByClassName("calendar");
-    for(i=0; i<rows.length; i++){
-     rows[i].innerHTML=innerHTML
-    }
+
+
 }
 //Cambios en la tabla
 function estadosChange(value){
+  var select = '';
   $.ajax({
    type: "POST",
    url: '../html/pautasRadio.php',
    data: {estadoID: value.childNodes[0].value.toString()},
    async: true,
    success: function(response) {
-    response = JSON.parse(response);
+      response = JSON.parse(response);
 
-    var t ='';
+      var t ='';
 
-    for(var i = 0; i<response.length;i++){
-     t+="<option value='"+ response[i]['idciudad'] +"'>"
-     + response[i]['ciudad'] +"</option>";
+      for(var i = 0; i<response.length;i++){
+       t+="<option value='"+ response[i]['idciudad'] +"'>"
+       + response[i]['ciudad']
+       +"</option>";
+      }
+      /* Remove all options from the select list */
+      var select = $(value.parentNode).find('.ciudad').children().first();
+      select.empty().append(t);
+
+      var ciudad = select[0];
+      ciudadesChange(ciudad);
     }
-
-    /* Remove all options from the select list */
-    var select = $(value.parentNode).find('.ciudad').children().first();
-    select.empty().append(t);
-
-
-   }
   });
+}
+  //Cambios en la tabla ciudades
+  function ciudadesChange(value){
+    console.log(value.childNodes[0].value.toString());
+    var idPauta = value.parentNode.parentNode.id;
+
+    $.ajax({
+     type: "POST",
+     url: '../html/pautasRadio.php',
+     data: {ciudadID: value.childNodes[0].value.toString()},
+     async: true,
+     success: function(response) {
+      response = JSON.parse(response);
+
+      var htmlEstacion ='';
+      var htmlFrecuencia ='';
+      var htmlSiglas ='';
+
+      for(var i = 0; i<response.length;i++){
+       htmlEstacion+="<option value='"+ response[i]['idRadio'] +"'>"
+       + response[i]['estacion']+ " | "
+       + response[i]['frecuencia'] + " | "
+       + response[i]['siglas']
+       +"</option>";
+      }
+
+      /* Remove all options from the select list */
+      var doc = (document).getElementById(idPauta);
+      var select = $(doc).find('.estacion').children().first();
+      select.empty().append(htmlEstacion);
+     }
+    });
 }

@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  
 //Abrir modal de Nuevo Estado
   $(".nuevoEstado").click(function(){
 
@@ -109,8 +110,6 @@ function estadosChange(value){
     /* Remove all options from the select list */
     var select = $(value.parentNode).find('.ciudad').children().first();
     select.empty().append(t);
-
-
    }
   });
 }

@@ -15,7 +15,24 @@ if(isset($_SESSION['idPauta'])){
 if(isset($_POST['estadoChange'])){
   estadoChange($_POST['estadoChange'],$_POST['parentID']);
 }
-
+//Ajax change of Estado
+if(isset($_POST['estadoID'])){
+  estadoChange($_POST['estadoID']);
+}
+//Ajax change of Ciudad
+if(isset($_POST['ciudadID'])){
+  ciudadChange($_POST['ciudadID']);
+}
+//Ajax change of spots date per day
+if(isset($_POST['getSpotsCalendar'])){
+  getNumSpotsDia($_POST['diaSpot'],($_POST['mesSpot']+1),$_POST['añoSpot'],$_POST['idPautaRenglon']);
+  exit();
+}
+//Ajax change of spots date per day
+if(isset($_POST['getSpotsDia'])){
+  getSpotsDia($_POST['diaSpot'],($_POST['mesSpot']+1),$_POST['añoSpot'],$_POST['idPautaRenglon']);
+  exit();
+}
 function searchRadios(){
     global $searchText;
     $_SESSION['searchMethod'] = 'estacion';
@@ -60,7 +77,8 @@ function setPautasRadio(){
   }
   function setTablePautas(){
       global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,
-
+      $tablaRadios,
+      $tablaEstaciones,
       $idPauta,
       $nombreCliente;
 
@@ -95,13 +113,7 @@ function setPautasRadio(){
         "<p>Ciudad</p>".
         "</td>".
         "<td>".
-          "<p>Estacion</p>".
-        "</td>".
-        "<td>".
-          "<p>Frecuencia</p>".
-        "</td>".
-        "<td>".
-          "<p>Siglas</p>".
+          "<p>Estacion | Frecuencia | Siglas</p>".
         "</td>".
         "<td class=fechasHeader>".
           "<p>Fechas</p>".
@@ -128,27 +140,25 @@ function setPautasRadio(){
           "<p>Comision</p>".
         "</td>".
       "</tr>";
+
+
       if (isset($tablaPautas)){
       for ($j=0; $j < count($tablaPautas); $j++) {
-              $idTarifa = $tablaPautas[$j]['idTarifa'];
+              $idPautaRadio = $tablaPautas[$j]['idPautaRadio'];
+              $idEstado = $tablaPautas[$j]['idestado'];
+              $idCiudad = $tablaPautas[$j]['idciudad'];
 
-               $r = $r. "<tr class='pautaIndividual' id='".$idTarifa."'>".
+               $r = $r. "<tr class='pautaIndividual' id='".$idPautaRadio."'>".
                  "<td>".
-                   "<p id='idTarifa'>". $idTarifa ."</p>".
+                   "<p id='idTarifa'>". $idPautaRadio ."</p>".
                  "</td>".
-                 "<td>".
-                   "<select id='estado' onchange=estadosChange(this)>". selectEstados($idEstado) ."</select>".
-                 "</td>"."<td>".
-                   "<select id='ciudad'>". selectCiudades($idTarifa) ."</select>".
+                 "<td id='estado' onchange = estadosChange(this)>".
+                   "<select>". selectEstados($idEstado) ."</select>".
+                 "</td>"."<td id='ciudad' class='ciudad' onchange = ciudadesChange(this)>".
+                   "<select>". selectCiudades($idCiudad,$idEstado) ."</select>".
                  "</td>".
-                 "<td>".
-                   "<select id='estacionSelect'>".selectEstaciones($idTarifa)."</select>".
-                 "</td>".
-                 "<td>".
-                   "<select id='frecuenciaSelect'>".selectFrecuencias($idTarifa)."</select>".
-                 "</td>".
-                 "<td>".
-                   "<select id='siglasSelect'>".selectSiglas($idTarifa)."</select>".
+                 "<td id='estacion' class='estacion'>".
+                   "<select id='estacionSelect'>".selectEstaciones($idPautaRadio,$idCiudad)."</select>".
                  "</td>".
                  "<td class=innerTD>".
                    "<div  id=calendar class=calendar></div>".
@@ -392,81 +402,34 @@ function setPautasRadio(){
     }
   }
 
-  function selectEstaciones($idTarifa){
-    global $tablaRadioIdTarifas,
-    $tablaRadios;
+  function selectEstaciones($idRadio,$idCiudad){
+    global $tablaEstaciones;
 
-    setTablaRadioIdTarifas($idTarifa);
+    setTablaEstaciones($idRadio,$idCiudad);
 
     $r='';
-    for ($j=0; $j < count($tablaRadios); $j++) {
-      if($tablaRadios[$j]['idRadio'] == $tablaRadioIdTarifas[0]['idRadio']){
+    for ($j=0; $j < count($tablaEstaciones); $j++) {
+
+      if($tablaEstaciones[$j]['idRadio'] == $idRadio){
         $r = $r.
-        "<option value='". $tablaRadios[$j]['estacion'] ."' selected='selected'>"
-        .  $tablaRadios[$j]['estacion'] .
+        "<option value='". $tablaEstaciones[$j]['idRadio'] ."' selected='selected'>"
+        . $tablaEstaciones[$j]['estacion'] ." | ". $tablaEstaciones[$j]['frecuencia'] ." | ". $tablaEstaciones[$j]['siglas'] .
         "</option>";}
       else{
         $r = $r.
-        "<option value='". $tablaRadios[$j]['estacion'] ."'>"
-        . $tablaRadios[$j]['estacion'] ."</option>";
+        "<option value='". $tablaEstaciones[$j]['idRadio'] ."'>"
+        . $tablaEstaciones[$j]['estacion'] ." | ". $tablaEstaciones[$j]['frecuencia'] ." | ". $tablaEstaciones[$j]['siglas'] ."</option>";
+
         }
       }
       return $r;
-
-    }
-
-
-  function selectFrecuencias($idTarifa){
-    global $tablaRadioIdTarifas,
-    $tablaRadios;
-
-    setTablaRadioIdTarifas($idTarifa);
-
-    $r='';
-    for ($j=0; $j < count($tablaRadios); $j++) {
-      if($tablaRadios[$j]['idRadio'] == $tablaRadioIdTarifas[0]['idRadio']){
-        $r = $r.
-        "<option value='". $tablaRadios[$j]['frecuencia'] ."' selected='selected'>"
-        .  $tablaRadios[$j]['frecuencia'] .
-        "</option>";}
-      else{
-        $r = $r.
-        "<option value='". $tablaRadios[$j]['frecuencia'] ."'>"
-        . $tablaRadios[$j]['frecuencia'] ."</option>";
-        }
-      }
-      return $r;
-
-    }
-
-  function selectSiglas($idTarifa){
-    global $tablaRadioIdTarifas,
-    $tablaRadios;
-
-    setTablaRadioIdTarifas($idTarifa);
-
-    $r='';
-    for ($j=0; $j < count($tablaRadios); $j++) {
-      if($tablaRadios[$j]['idRadio'] == $tablaRadioIdTarifas[0]['idRadio']){
-        $r = $r.
-        "<option value='". $tablaRadios[$j]['siglas'] ."' selected='selected'>"
-        .  $tablaRadios[$j]['siglas'] .
-        "</option>";}
-      else{
-        $r = $r.
-        "<option value='". $tablaRadios[$j]['siglas'] ."'>"
-        . $tablaRadios[$j]['siglas'] ."</option>";
-        }
-      }
-      return $r;
-
-    }
+  }
 
   function selectTarifas($idTarifa){
-    global $tablaRadioIdTarifas,
+    global $tablaEstaciones,
     $tablaRadios;
 
-    setTablaRadioIdTarifas($idTarifa);
+    setTablaEstaciones($idRadio,$idCiudad);
 
     $r='';
     for ($j=0; $j < count($tablaRadios); $j++) {
@@ -507,28 +470,108 @@ function setPautasRadio(){
 
 
   }
-  function setTablaRadioIdTarifas($idTarifa){
-    global $servername, $username, $password, $dbname, $user, $pwd, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
-    $tablaRadioIdTarifas;
 
-    // Buscar Tabla Relacional
-    $sqlFrom = 'pautasradioidtarifas';
-    $searchMethod="idTarifa";
-    $searchText = $idTarifa;
+function setTablaEstaciones($idRadio,$idCiudad){
+  global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
+  $tablaEstaciones;
 
-    sqlSearchSpecific($sqlFrom,$searchMethod,$searchText);
+  // Buscar Tabla Relacional
+  $sqlFrom = 'radios';
+  $searchMethod="idCiudad";
+  $searchText = $idCiudad;
 
-    if($result != null){
-      $i=0;
-        while($row = mysqli_fetch_array($result))
-          {
-            $tablaRadioIdTarifas[$i]=$row;
-            $i=$i+1;
-          }
-    }
+  $result = sqlSearchSpecific($sqlFrom,$searchMethod,$searchText);
+
+  if($result != null){
+    $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $tablaEstaciones[$i]=$row;
+          $i=$i+1;
+        }
   }
+}
 
+function ciudadChange($ciudad){
 
+  global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
+  $tablaEstados;
 
+  $sqlFrom = 'radios';
+  $searchMethod="idciudad";
+  $searchText = $ciudad;
 
+  $result = sqlSearchSpecific($sqlFrom,$searchMethod,$searchText);
+
+  $r='';
+
+  if($result != null){
+    $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $r[$i]['idRadio'] = $row['idRadio'];
+          $r[$i]['estacion'] = $row['estacion'];
+          $r[$i]['frecuencia'] = $row['frecuencia'];
+          $r[$i]['siglas'] = $row['siglas'];
+
+          $i=$i+1;
+        }
+  }
+  echo json_encode($r);
+  exit();
+}
+
+function getNumSpotsDia($dia,$mes,$año,$idPautaRadio){
+  global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
+  $tablaSpots;
+
+  // Buscar Tabla Relacional
+  $sqlFrom = 'spotsRadio';
+  $searchMethod="idPautaRadio";
+  $searchText = $idPautaRadio;
+
+  $sql= "SELECT sum(cantidad) as cantidad from spotsradio where idUser = ".$_SESSION['idUser']." and fecha like DATE_FORMAT('". $año . "-" . $mes . "-" . $dia . "', '%Y-%m-%d') and idPautaRadio = " . $idPautaRadio;
+
+  $result = sqlSearchSpecificQuery($sql);
+
+  if($result != null){
+    $row = mysqli_fetch_array($result);
+    $r=$row['cantidad'];
+  }
+  if($r == null){
+    $r = 0;
+  }
+  echo json_encode($r);
+
+}
+
+function getSpotsDia($dia,$mes,$año,$idPautaRadio){
+  global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
+  $tablaSpots;
+
+  // Buscar Tabla Relacional
+  $sql= "SELECT * FROM spotsradio where fecha = DATE_FORMAT('". $año . "-" . $mes . "-" . $dia . "', '%Y-%m-%d') and idPautaRadio = " . $idPautaRadio . " and idUser = " . $_SESSION['idUser'];
+  $result = sqlSearchSpecificQuery($sql);
+
+  $r = "<div class=bigTableContainer> <table class = spotsRadioDia>" .
+  "<tr class='spotsRadioDiaHeaders'><td>idSpot</td>" .
+  "<td>Hora</td>" .
+  "<td>Cantidad</td>" .
+  "<td>Duracion | Tarifa General | Tarifa Especifica | Descuento</td></tr>";
+
+  if($result != null){
+    $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $r = $r .
+          "<tr class='trTableRadios'><td id=idSpot>" .  $row['idSpot'] . "</td>" .
+          "<td id=hora><input type=time value=" . $row['hora'] . "></td>" .
+          "<td id=cantidad><input type=number value=" . $row['cantidad'] . "></td>" .
+          "<td id=duracion>" . $row['duracion'] . " | $"  . $row['tarifaGeneral'] . " | $"  . $row['tarifaEspecifica'] . " | " . $row['descuento'] ."</td></tr>";
+        }
+  }
+  $r = $r . "</table>";
+  echo json_encode($r);
+
+}
 ?>

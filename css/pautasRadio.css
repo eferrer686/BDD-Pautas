@@ -28,6 +28,12 @@ select{
   font-size: 13;
 
 }
+.spotsRadioDia td{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: 13;
+
+}
 .tablePautas{
   width: 90%;
   position: relative;
@@ -39,11 +45,22 @@ select{
   align-items: center;
   margin: auto;
 }
+.spotsRadioDia{
+  width: 90%;
+  position: relative;
+  font-family: sans-serif;
+  padding: 10px;
+  text-align: center;
+  background: rgba(200, 200, 200, 0.8 );
+  border-radius: 2px;
+  align-items: center;
+  margin: auto;
+}
 .tablePautas a{
   font-family: sans-serif;
   color: black;
 }
-.tablePautasHeaders td{
+.tablePautasHeaders td,.spotsRadioDiaHeaders td{
   margin: 0 auto;
   border-bottom:2px solid rgba(25,25,25);
   background-color: none;
@@ -110,6 +127,7 @@ input[type=button], input[type=submit]{
   text-decoration: none;
   cursor: pointer;
   border-radius: 2px;
+
 }
 
 input[type=date]{
@@ -132,14 +150,13 @@ input[type=date]{
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 .modal input[type=button]{
-  position:relative;
-  top: 50px;
+  position: relative;
+  bottom:   -25%;
   transition:0.2s ease;
 
 }
 .modal input[type=button]:hover{
-  position:relative;
-  top: 50px;
+
   background-color: rgba(70,70,70,1);
   transition:0.2s ease;
 }
@@ -152,8 +169,8 @@ input[type=date]{
     margin: auto;
     padding: 20px;
     /* border: 1px solid #888; */
-    width: 330px;
-    height:400px;
+    width: 50%;
+    height: 50%;
     text-align: center;
 }
 .modal-content p{
@@ -167,6 +184,7 @@ input[type=date]{
     color: #aaaaaa;
     font-size: 28px;
     font-weight: bold;
+
 }
 
 .close:hover,
@@ -174,4 +192,7 @@ input[type=date]{
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+.modal-title{
+  width: 100%;
 }

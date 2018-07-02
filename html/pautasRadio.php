@@ -19,60 +19,58 @@
 
 </head>
 
-<body><table class="topHTMLTable">
-  <td>
-    <h1>Pautas de <?php printPautaNombre(); ?></h1>
-  </td>
-  <td>
-    <table class="setDates">
-      <td>
-        <p>Desde:</p>
-      </td>
-      <td>
-        <input type="date" name="begin" value="" class="begin" id = "begin">
-      </td>
-      <td>
-        <p>Hasta:</p>
-      </td>
-      <td>
-        <input type="date" name="finish" value="" class="begin" id = "finish">
-      </td>
-    </table>
-  </td>
-</table>
+<body>
+  <!-- Modal de Fecha -->
+  <!-- The Modal -->
+  <div id=myModal class=modal>
+
+    <div class=modal-content>
+      <table class="modal-title">
+        <tr>
+          <td>
+            <div id='textDate'></div>
+          </td>
+          <td>
+            <span class=close>&times;</span>
+          </td>
+        </tr>
+      </table>
+      <div id=modal-table></div>
+        <input type=date name=date id=modalDate value='' hidden=true>
+      <div class=tablaDiaPautasRadio></div>
+      <input type=button name=AceptarSpot value=Aceptar>
+    </div>
+  </div>
+
+  <table class="topHTMLTable">
+    <td>
+      <h1>Pautas de <?php printPautaNombre(); ?></h1>
+    </td>
+    <td>
+      <table class="setDates">
+        <td>
+          <p>Desde:</p>
+        </td>
+        <td>
+          <input type="date" name="begin" value="" class="begin" id = "begin">
+        </td>
+        <td>
+          <p>Hasta:</p>
+        </td>
+        <td>
+          <input type="date" name="finish" value="" class="begin" id = "finish">
+        </td>
+      </table>
+    </td>
+  </table>
 
   <!-- Table Pautas -->
   <div class="pautas" id = "pautas"><?php setTablePautas(); ?></div>
   <!-- Table Pautas -->
 
-  <!-- Modal de Fecha -->
-  <!-- The Modal -->
-<!-- <div id=myModal class=modal>
 
-  <div class=modal-content>
-    <span class=close>&times;</span>
-    <table>
-      <tr>
-      <td>
-        <p>Numero de spots:</p>
-      </td>
-      <td>
-        <input type=number name=numSpots value=''>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <p>Tipo de Spot:</p>
-      </td>
-      <td>
-        <input type=text name=tipoSpot value=''>
-      </td>
-    </tr>
-  </table>
-  <input type=button name=AceptarSpot value=Aceptar>
-  </div>
 
-</div> -->
+
 
 
 

@@ -72,8 +72,6 @@ function searchRadio(){
             $siglas = $row['siglas'];
             $idProveedor = $row['idProveedor'];
 
-            logjs($idProveedor ." - ". $row['idRadio']);
-
             echo
              "<tr class='trTableRadios'id=editable>
              <td class='idRadio'>" . $row['idRadio'] .
