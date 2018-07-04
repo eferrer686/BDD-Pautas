@@ -153,6 +153,7 @@ input[type=date]{
   position: relative;
   bottom:   -25%;
   transition:0.2s ease;
+  margin: 10px;
 
 }
 .modal input[type=button]:hover{
@@ -169,8 +170,8 @@ input[type=date]{
     margin: auto;
     padding: 20px;
     /* border: 1px solid #888; */
-    width: 50%;
-    height: 50%;
+    margin: 50px auto;
+    max-width: 700px;
     text-align: center;
 }
 .modal-content p{

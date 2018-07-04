@@ -116,6 +116,8 @@ function sqlSearchSpecific($sqlFrom,$searchMethod,$searchText){
 
     $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '%".$searchText."%' and idUser = ".$_SESSION['idUser'];
     // logjs($sql);
+    // echo json_encode($sql);
+
     $result = mysqli_query($con,$sql);
     return $result;
 }

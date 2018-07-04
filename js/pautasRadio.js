@@ -76,8 +76,7 @@ function setDaysModals(){
      success: function(response) {
        var modalTable = document.getElementById('modal-table');
 
-       var tableHTML = JSON.parse(response);
-
+       var tableHTML = response;
        modalTable.innerHTML = tableHTML;
 
      }
@@ -126,14 +125,14 @@ function displayCalendar(){
         var numSpots;
 
         $.ajax({
-         type: "POST",
-         url: '../html/pautasRadio.php',
-         data: {getSpotsCalendar: 1,diaSpot: begin.getDate(), mesSpot: begin.getMonth(),añoSpot: begin.getFullYear(), idPautaRenglon: id},
-         async: false,
-         success: function(response) {
-           res = JSON.parse(response);
-           numSpots = res;
-         }
+           type: "POST",
+           url: '../html/pautasRadio.php',
+           data: {getSpotsCalendar: 1,diaSpot: begin.getDate(), mesSpot: begin.getMonth(),añoSpot: begin.getFullYear(), idPautaRenglon: id},
+           async: false,
+           success: function(response) {
+             res = JSON.parse(response);
+             numSpots = res;
+           }
         });
 
         // console.log("Month: "+month+" begin.getMonth(): "+ begin.getMonth());
