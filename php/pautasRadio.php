@@ -27,16 +27,15 @@ if(isset($_POST['ciudadID'])){
 //Ajax change of spots date per day
 if(isset($_POST['getSpotsCalendar'])){
   //Recibe fecha inicio y fecha fin
-  getSpotsCalendar($_POST['iDiaSpot'],($_POST['iMesSpot']+1),$_POST['iAñoSpot'],$_POST['idPautaRenglon']);
-  //Solo consigue un dia
-  getNumSpotsDia($_POST['diaSpot'],($_POST['mesSpot']+1),$_POST['añoSpot'],$_POST['idPautaRenglon']);
+  getSpotsCalendar($_POST['iDiaSpot'],($_POST['iMesSpot']+1),$_POST['iAñoSpot'],$_POST['fDiaSpot'],($_POST['fMesSpot']+1),$_POST['fAñoSpot'],$_POST['idPautaRenglon']);
+
   exit();
 }
 //Ajax change of spots date per day
 if(isset($_POST['getSpotsDia'])){
-  // echo json_encode("Something");
 
   getSpotsDia($_POST['diaSpot'],($_POST['mesSpot']+1),$_POST['añoSpot'],$_POST['idPautaRenglon']);
+
   exit();
 }
 function searchRadios(){
@@ -547,7 +546,7 @@ function getNumSpotsDia($dia,$mes,$año,$idPautaRadio){
   if($r == null){
     $r = 0;
   }
-  echo json_encode($r);
+  return $r;
 
 }
 
@@ -626,7 +625,11 @@ function setTablaPautasRadio($idPautaRadio){
         $i=$i+1;
       }
   }
-
+}
+function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fAñoSpot,$idPautaRenglon){
+  //Solo consigue un dia
+  // echo json_encode(getNumSpotsDia($_POST['iDiaSpot'],($_POST['iMesSpot']+1),$_POST['iAñoSpot'],$_POST['idPautaRenglon']));
+  echo($iMesSpot."-".$iDiaSpot);
 }
 
 ?>

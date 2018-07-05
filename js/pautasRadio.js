@@ -127,11 +127,21 @@ function displayCalendar(){
         $.ajax({
            type: "POST",
            url: '../html/pautasRadio.php',
-           data: {getSpotsCalendar: 1,diaSpot: begin.getDate(), mesSpot: begin.getMonth(),añoSpot: begin.getFullYear(), idPautaRenglon: id},
-           async: false,
+           data: {
+             getSpotsCalendar: 1,
+             iDiaSpot: begin.getDate(),
+             iMesSpot: begin.getMonth(),
+             iAñoSpot: begin.getFullYear(),
+             fDiaSpot: finish.getDate(),
+             fMesSpot: finish.getMonth(),
+             fAñoSpot: finish.getFullYear(),
+             idPautaRenglon: id
+           },
+           async: true,
            success: function(response) {
-             res = JSON.parse(response);
+             res = (response);
              numSpots = res;
+             console.log(res);
            }
         });
 
@@ -146,14 +156,13 @@ function displayCalendar(){
         month = begin.getMonth();
         innerHTML += "<td><table class='month' id='"+ month +"'>";
         innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " + begin.getFullYear() +"</td></tr><tr>";
-
       }
-
     }
+
     innerHTML += "</table>";
 
 
-    rows[i].innerHTML=innerHTML
+    rows[i].innerHTML=innerHTML;
   }
 
 
