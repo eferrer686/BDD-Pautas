@@ -96,79 +96,102 @@ function displayTable(){
 function displayCalendar(){
 
   // set the content of div .
-  var rows = document.getElementsByClassName("calendar");
-
-  for(i=0; i<rows.length; i++){
-
-  var b = document.getElementById("begin").value.split(/\D/);
-  var begin = new Date(b[0], --b[1], b[2]);
-  var b = document.getElementById("finish").value.split(/\D/);
-  var finish = new Date(b[0], --b[1], b[2]);
-
-  var innerHTML="";
-
-  innerHTML="";
-
-  innerHTML += "<table class='innerCalendar'>";
-
-  var month = begin.getMonth();
-  innerHTML += "<td><table class='month' id='"+ month +"'>";
-
-  if(!isNaN(month)){
-    innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " +begin.getFullYear() +"</td></tr><tr>";
-  }
 
 
-    while(begin<=finish){
-      if(begin.getMonth() == month){
-        var id = rows[i].parentNode.parentNode.id;
-        var numSpots;
+    var b = document.getElementById("begin").value.split(/\D/);
+    var begin = new Date(b[0], --b[1], b[2]);
+    var b = document.getElementById("finish").value.split(/\D/);
+    var finish = new Date(b[0], --b[1], b[2]);
 
-        $.ajax({
-           type: "POST",
-           url: '../html/pautasRadio.php',
-           data: {
-             getSpotsCalendar: 1,
-             iDiaSpot: begin.getDate(),
-             iMesSpot: begin.getMonth(),
-             iAñoSpot: begin.getFullYear(),
-             fDiaSpot: finish.getDate(),
-             fMesSpot: finish.getMonth(),
-             fAñoSpot: finish.getFullYear(),
-             idPautaRenglon: id
-           },
-           async: true,
-           success: function(response) {
-             res = (response);
-             numSpots = res;
-             console.log(res);
-           }
+    var rows = document.getElementsByClassName("calendar");
+
+    for(i=0; i<rows.length; i++){
+
+      var id = rows[i].parentNode.parentNode.id;
+      var cont = i;
+
+      $.when(getSpots(begin,finish,id)).done(function(result) {
+          console.log(cont);
+          var innerHTML="";
+
+          innerHTML += "<table class='innerCalendar'>";
+
+          var month = begin.getMonth();
+          innerHTML += "<td><table class='month' id='"+ month +"'>";
+
+          if(!isNaN(month)){
+            innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " +begin.getFullYear() +"</td></tr><tr>";
+          }
+
+          console.log(JSON.parse(result));
+
+          var idSpot = 0;
+          while(begin<=finish){
+            if(begin.getMonth() == month){
+
+              var numSpots;
+              idSpot++;
+
+              for (var j = 0; j < result.length; j++) {
+                if(result[j]["fecha"]==begin){
+                  numSpots = result[j]["cantidad"];
+                }
+              }
+
+              innerHTML += "<td class='completeDay'><table class='completeDayTable'><tr><td class='day'>" + begin.getDate() + "<input type='date' id='date' name='date' value='"+ dateToInput(begin) +"' hidden='true'></td></tr>" ;
+              innerHTML += "<tr><td class='numSpots'}'>"+numSpots+"</td></tr></table></td>" ;
+              begin.setDate(begin.getDate() + 1);
+            }
+             else{
+              innerHTML +="</tr></table></td>";
+              month = begin.getMonth();
+              innerHTML += "<td><table class='month' id='"+ month +"'>";
+              innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " + begin.getFullYear() +"</td></tr><tr>";
+            }
+          }
+
+          innerHTML += "</table>";
+
+
+          rows[cont].innerHTML=innerHTML;
         });
-
-        // console.log("Month: "+month+" begin.getMonth(): "+ begin.getMonth());
-
-        innerHTML += "<td class='completeDay'><table class='completeDayTable'><tr><td class='day'>" + begin.getDate() + "<input type='date' id='date' name='date' value='"+ dateToInput(begin) +"' hidden='true'></td></tr>" ;
-        innerHTML += "<tr><td class='numSpots'}'>"+numSpots+"</td></tr></table></td>" ;
-        begin.setDate(begin.getDate() + 1);
-
-      }else{
-        innerHTML +="</tr></table></td>";
-        month = begin.getMonth();
-        innerHTML += "<td><table class='month' id='"+ month +"'>";
-        innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " + begin.getFullYear() +"</td></tr><tr>";
       }
-    }
-
-    innerHTML += "</table>";
 
 
-    rows[i].innerHTML=innerHTML;
-  }
+}
+function getSpots(begin,finish,id){
+  return ($.when(getNumSpots(begin,finish,id)).done(function(response){
+      //Get AJAX operation
+      spots = JSON.parse(response);
+      for (var i = 0; i < spots.length; i++) {
+        spots[i]["fecha"] = inputToDate(spots[i]["fecha"]);
+      }
+      return spots;
+    })
+  );
+}
 
-
-
-
-
+function getNumSpots(begin,finish,id){
+    return $.ajax({
+       type: "POST",
+       url: '../html/pautasRadio.php',
+       async: true,
+       data: {
+         getSpotsCalendar: 1,
+         iDiaSpot: begin.getDate(),
+         iMesSpot: begin.getMonth(),
+         iAñoSpot: begin.getFullYear(),
+         fDiaSpot: finish.getDate(),
+         fMesSpot: finish.getMonth(),
+         fAñoSpot: finish.getFullYear(),
+         idPautaRenglon: id
+       }
+       // ,
+       // success: function(response) {
+       //   res = (response);
+       //   return numSpots[idSpot] = res;
+       // }
+    });
 }
 //Cambios en la tabla
 function estadosChange(value){

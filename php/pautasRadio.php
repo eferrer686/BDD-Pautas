@@ -527,6 +527,7 @@ function ciudadChange($ciudad){
 }
 
 function getNumSpotsDia($dia,$mes,$año,$idPautaRadio){
+  //Suma de spots por dia especifico
   global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
   $tablaSpots;
 
@@ -627,9 +628,44 @@ function setTablaPautasRadio($idPautaRadio){
   }
 }
 function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fAñoSpot,$idPautaRenglon){
-  //Solo consigue un dia
-  // echo json_encode(getNumSpotsDia($_POST['iDiaSpot'],($_POST['iMesSpot']+1),$_POST['iAñoSpot'],$_POST['idPautaRenglon']));
-  echo($iMesSpot."-".$iDiaSpot);
+  global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $r=[];
+  // Buscar Tabla Relacional
+  $sqlFrom = 'spotsRadio';
+  $searchMethod="idPautaRadio";
+  $searchText = $idPautaRenglon;
+
+  $sql = "
+  SELECT
+    	sum(cantidad) as cantidad,
+      fecha,
+      idSpot
+    FROM
+        spotsradio
+    WHERE
+        fecha BETWEEN DATE_FORMAT('".$iAñoSpot."-%".$iMesSpot."-%".$iDiaSpot."', '%Y-%m-%d') AND DATE_FORMAT('".$fAñoSpot."-%".$fMesSpot."-%".$fDiaSpot."', '%Y-%m-%d')
+            AND idPautaRadio = ".$idPautaRenglon."
+            AND idUser = ". $_SESSION['idUser']."
+      group by fecha
+      ;"
+    ;
+
+    $result = sqlSearchSpecificQuery($sql);
+
+    if($result != null){
+      $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $r[$i]=$row;
+          $i=$i+1;
+        }
+    }
+    if($r == null){
+      $r[0] = 0;
+    }
+    echo json_encode($r);
+
 }
 
 ?>
