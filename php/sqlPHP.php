@@ -204,15 +204,13 @@ function sqlUpdate(){
     $sql = "UPDATE ".$sqlFrom." SET ".$updateName."='".$updateValue."' WHERE ".$tableID."= ".$idTuple."";
 
     // echo '<script language="javascript">';
-    // echo 'alert("'.$sql.'")';
+    echo $sql;
     // echo '</script>';
 
     $result = mysqli_query($con,$sql);
 
-
-
-
 }
+
 function logout(){
   global $user,$password;
   $_SESSION['idUser']='';

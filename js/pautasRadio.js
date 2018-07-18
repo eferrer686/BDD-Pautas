@@ -14,6 +14,57 @@ $(document).ready(function() {
 
   setDaysModals();
 
+  $(".aceptarSpot").click(function(){
+    var table = document.getElementById("spotsRadioDia");
+
+    var sqlTable=[];
+
+    for (var i = 1, row; row = table.rows[i]; i++) {
+      var sqlRow=[];
+
+      var idSpot = row.cells[0].innerHTML.replace('<br>', '');
+
+      var sel = row.cells[1].childNodes[0];
+      var hora = sel.value;
+
+      var sel = row.cells[2].childNodes[0];
+      var cantidad = sel.value;
+
+      var sel = row.cells[3].childNodes[0];
+      var opt = sel.options[sel.selectedIndex];
+      var tarifa =  opt.value;
+
+      var idPautaRenglon = this.parentNode.childNodes[7].value;
+      var date = this.parentNode.childNodes[5].value;
+      console.log(tarifa);
+
+      sqlRow[0]= idSpot;
+      sqlRow[1]= hora;
+      sqlRow[2]= cantidad;
+      sqlRow[3]= tarifa;
+      sqlRow[4]= date;
+      sqlRow[5]= idPautaRenglon;
+
+
+      sqlTable[i-1]=sqlRow;
+
+    }
+    // console.log(sqlTable);
+
+    //AJAX request to update, no submit
+
+    $.ajax({
+     type: "POST",
+     url: '../html/pautasRadio.php',
+     data: {tablaModalSpots: JSON.stringify(sqlTable)},
+     async: true,
+     success: function(response) {
+       displayCalendar();
+     }
+    });
+
+  });
+
 });
 // date is expected to be a date object (e.g., new Date())
 const dateToInput = date =>
@@ -28,6 +79,7 @@ const inputToDate = str => new Date(str.split('-'));
 function setDaysModals(){
   $(".completeDay").click(function(){
     var date = inputToDate($(this).find("[name=date]").val());
+    var id = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id;
 
     // -----------------------------------------------------------------------------
     // Modals Management
@@ -60,6 +112,7 @@ function setDaysModals(){
     }
 
     document.getElementById("modalDate").valueAsDate = date;
+    document.getElementById("modalId").value = id;
     month = date.getMonth();
     day = date.getDate();
     year = date.getFullYear();
@@ -81,8 +134,6 @@ function setDaysModals(){
 
      }
     });
-
-
   });
 }
 const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -97,7 +148,6 @@ function displayCalendar(){
 
   // set the content of div .
 
-
     var b = document.getElementById("begin").value.split(/\D/);
     var begin = new Date(b[0], --b[1], b[2]);
     var b = document.getElementById("finish").value.split(/\D/);
@@ -107,11 +157,19 @@ function displayCalendar(){
 
     for(i=0; i<rows.length; i++){
 
-      var id = rows[i].parentNode.parentNode.id;
-      var cont = i;
 
-      $.when(getSpots(begin,finish,id)).done(function(result) {
-          console.log(cont);
+      var id = rows[i].parentNode.parentNode.id;
+
+
+      $.when(getNumSpots(begin,finish,id)).done(function(result) {
+
+          var b = document.getElementById("begin").value.split(/\D/);
+          var begin = new Date(b[0], --b[1], b[2]);
+          var b = document.getElementById("finish").value.split(/\D/);
+          var finish = new Date(b[0], --b[1], b[2]);
+
+          var rArray = JSON.parse(result);
+
           var innerHTML="";
 
           innerHTML += "<table class='innerCalendar'>";
@@ -123,18 +181,18 @@ function displayCalendar(){
             innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " +begin.getFullYear() +"</td></tr><tr>";
           }
 
-          console.log(JSON.parse(result));
-
           var idSpot = 0;
           while(begin<=finish){
             if(begin.getMonth() == month){
 
-              var numSpots;
+              var numSpots = 0;
               idSpot++;
 
-              for (var j = 0; j < result.length; j++) {
-                if(result[j]["fecha"]==begin){
-                  numSpots = result[j]["cantidad"];
+              for (var j = 0; j < rArray.length; j++) {
+
+
+                if(inputToDate(rArray[j]["fecha"]).getTime() === begin.getTime()){
+                  numSpots = rArray[j]["cantidad"];
                 }
               }
 
@@ -153,9 +211,16 @@ function displayCalendar(){
           innerHTML += "</table>";
 
 
-          rows[cont].innerHTML=innerHTML;
+          for (var k = 0; k < rows.length; k++) {
+            if (rows[k].parentNode.parentNode.id == rArray[0]["idPautaRadio"]){
+
+              rows[k].innerHTML=innerHTML;
+            }
+          }
+          setDaysModals();
         });
       }
+
 
 
 }
@@ -163,8 +228,13 @@ function getSpots(begin,finish,id){
   return ($.when(getNumSpots(begin,finish,id)).done(function(response){
       //Get AJAX operation
       spots = JSON.parse(response);
-      for (var i = 0; i < spots.length; i++) {
-        spots[i]["fecha"] = inputToDate(spots[i]["fecha"]);
+
+      // console.log(spots);
+
+      if(spots[0]!=0){
+        for (var i = 0; i < spots.length; i++) {
+          spots[i]["fecha"] = inputToDate(spots[i]["fecha"]);
+        }
       }
       return spots;
     })
@@ -222,7 +292,8 @@ function estadosChange(value){
 }
   //Cambios en la tabla ciudades
   function ciudadesChange(value){
-    console.log(value.childNodes[0].value.toString());
+    // console.log(value.childNodes[0].value.toString());
+
     var idPauta = value.parentNode.parentNode.id;
 
     $.ajax({

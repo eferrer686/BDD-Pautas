@@ -38,6 +38,14 @@ if(isset($_POST['getSpotsDia'])){
 
   exit();
 }
+//Ajax update spots for day
+
+if(isset($_POST['tablaModalSpots'])){
+
+  updateModalTable(json_decode($_POST['tablaModalSpots']));
+  exit();
+}
+
 function searchRadios(){
     global $searchText;
     $_SESSION['searchMethod'] = 'estacion';
@@ -559,7 +567,7 @@ function getSpotsDia($dia,$mes,$año,$idPautaRadio){
   $sql= "SELECT * FROM spotsradio where fecha = DATE_FORMAT('". $año . "-" . $mes . "-" . $dia . "', '%Y-%m-%d') and idPautaRadio = " . $idPautaRadio . " and idUser = " . $_SESSION['idUser'];
   $result = sqlSearchSpecificQuery($sql);
 
-  $r = "<div class=bigTableContainer> <table class = spotsRadioDia>" .
+  $r = "<div class=bigTableContainer> <table class = spotsRadioDia id = spotsRadioDia>" .
   "<tr class='spotsRadioDiaHeaders'><td>idSpot</td>" .
   "<td>Hora</td>" .
   "<td>Cantidad</td>" .
@@ -601,7 +609,7 @@ function setSelectTarifa($idTarifa, $idPautaRadio){
       .  $tablaTarifas[$i]['duracion']  ." | $"  . $tablaTarifas[$i]['tarifaGeneral'] . " | $"  . $tablaTarifas[$i]['tarifaEspecifica'] . " | " . $tablaTarifas[$i]['descuento'] . "</option>";}
     else{
       $r = $r .
-      "<option value='". $tablaTarifas[$i]['idProveedor'] ."'>"
+      "<option value='". $tablaTarifas[$i]['idTarifa'] ."'>"
       .  $tablaTarifas[$i]['duracion']  ." | $"  . $tablaTarifas[$i]['tarifaGeneral'] . " | $"  . $tablaTarifas[$i]['tarifaEspecifica'] . " | " . $tablaTarifas[$i]['descuento'] . "</option>";
       }
     }
@@ -640,7 +648,8 @@ function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fA
   SELECT
     	sum(cantidad) as cantidad,
       fecha,
-      idSpot
+      idSpot,
+      idPautaRadio
     FROM
         spotsradio
     WHERE
@@ -668,4 +677,72 @@ function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fA
 
 }
 
+
+
+// Manipulación de tabla de modales
+
+
+function updateModalTable($newTable){
+  global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple;
+
+
+  for ($i=0; $i < count($newTable)-1; $i++) {
+
+    $tableID = 'idSpot';
+    $sqlFrom = 'spot';
+
+    $idTuple = $newTable[$i][0];
+
+    $updateName = 'hora';
+    $updateValue = $newTable[$i][1];
+    sqlUpdate();
+
+
+    $updateName = 'cantidad';
+    $updateValue = $newTable[$i][2];
+    sqlUpdate();
+
+    $updateName = 'tarifaRadio_idTarifa';
+    $updateValue = $newTable[$i][3];
+    sqlUpdate();
+
+  }
+
+
+  if($newTable[count($newTable)-1][1]!=''){
+      addSpot($newTable[count($newTable)-1]);
+  }
+}
+function addSpot($lastRow){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+  $sql = 'INSERT INTO spot (fecha, hora, cantidad, renglonPauta_idRenglonPauta, tarifaRadio_idTarifa) VALUES ("' .
+      $lastRow[4] .'","' .
+      $lastRow[1] .'","' .
+      $lastRow[2] .'","' .
+      $lastRow[5] .'","' .
+      $lastRow[3] .'")';
+
+
+
+  $result = mysqli_query($con,$sql);
+
+
+
+
+  $_SESSION['searchMethod'] = 'estacion';
+  $_SESSION['searchText'] = '';
+
+  searchRadios();
+
+
+}
 ?>

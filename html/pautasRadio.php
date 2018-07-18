@@ -22,7 +22,7 @@
 <body>
   <!-- Modal de Fecha -->
   <!-- The Modal -->
-  
+
   <div id=myModal class=modal>
 
     <div class=modal-content>
@@ -38,8 +38,9 @@
       </table>
       <div id=modal-table></div>
         <input type=date name=date id=modalDate value='' hidden=true>
+        <input type=text name=id id=modalId value='' hidden=true>
       <div class=tablaDiaPautasRadio></div>
-      <input type=button name=AceptarSpot value=Aceptar>
+      <input type=button name=AceptarSpot value=Aceptar class="aceptarSpot">
     </div>
   </div>
 
