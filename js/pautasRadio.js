@@ -1,5 +1,23 @@
 $(document).ready(function() {
 
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {dateRange: 1},
+   async: true,
+   beforeSend: function(){
+        showLoading();
+    },
+   success: function(response) {
+     begDate = JSON.parse(response)[1];
+     finDate = JSON.parse(response)[0];
+     $(".begin").val(begDate);
+     $(".finish").val(finDate);
+     displayTable();
+
+   }
+  });
+
   $(".begin").change(function() {
     displayTable();
     setDaysModals();
@@ -11,6 +29,67 @@ $(document).ready(function() {
 
   });
 
+  // Si cambia radio estado o ciudad se actualizan tarifas en DB
+  var previous;
+  var prevEstado;
+  var prevCiudad;
+  var prevEstacion;
+
+  $(".ciudadSelect").on('focus', function () {
+      // Store the current value on focus and on change
+      prevCiudad = this.value;
+      prevEstacion = this.parentNode.parentNode.childNodes[3].childNodes[0].value;
+      prevEstado = this.parentNode.parentNode.childNodes[1].childNodes[0].value;
+
+  }).change(function() {
+      // Do something with the previous value after the change
+      if(confirm("Estás seguro de cambiar la ciudad? Esto causaria que todos los spots almacenados se actualicen")){
+        changeECR();
+      }else {
+        sortSelects(this);
+        setSelectValues(this,prevEstado,prevCiudad,prevEstacion);
+      }
+  });
+  $(".estacionSelect").on('focus', function () {
+      // Store the current value on focus and on change
+      prevEstado = this.parentNode.parentNode.childNodes[1].childNodes[0].value;
+      prevCiudad = this.parentNode.parentNode.childNodes[2].childNodes[0].value;
+      prevEstacion = this.value;
+
+  }).change(function() {
+      // Do something with the previous value after the change
+      if(confirm("Estás seguro de cambiar la estación? Esto causaria que todos los spots almacenados se actualicen")){
+        changeECR();
+      }else {
+        sortSelects(this);
+        setSelectValues(this,prevEstado,prevCiudad,prevEstacion);
+      }
+  });
+
+  $(".estadoSelect").on('focus', function () {
+      // Store the current value on focus and on change
+      prevEstado = this.value;
+      prevCiudad = this.parentNode.parentNode.childNodes[2].childNodes[0].value ;
+      prevEstacion = this.parentNode.parentNode.childNodes[3].childNodes[0].value;
+
+
+  }).change(function() {
+      // Do something with the previous value after the change
+      if(confirm("Estás seguro de cambiar el estado? Esto causaria que todos los spots almacenados se actualicen")){
+        changeECR();
+      }else {
+        sortSelects(this);
+        setSelectValues(this,prevEstado,prevCiudad,prevEstacion);
+      }
+  });
+
+  //Eliminar renglones
+
+  $(".deleteRenglon").click(function(){
+    if(confirm("Estás seguro de eliminar todo este renglon, los cambios NO serán reversibles")){
+      deleteRenglon(this);
+    }
+  });
 
   setDaysModals();
 
@@ -36,7 +115,7 @@ $(document).ready(function() {
 
       var idPautaRenglon = this.parentNode.childNodes[7].value;
       var date = this.parentNode.childNodes[5].value;
-      console.log(tarifa);
+
 
       sqlRow[0]= idSpot;
       sqlRow[1]= hora;
@@ -60,6 +139,8 @@ $(document).ready(function() {
      async: true,
      success: function(response) {
        displayCalendar();
+       var modal = document.getElementById('myModal');
+       modal.style.display = "none";
      }
     });
 
@@ -77,6 +158,7 @@ const dateToInput = date =>
 const inputToDate = str => new Date(str.split('-'));
 
 function setDaysModals(){
+
   $(".completeDay").click(function(){
     var date = inputToDate($(this).find("[name=date]").val());
     var id = this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.id;
@@ -146,6 +228,7 @@ function displayTable(){
 }
 function displayCalendar(){
 
+
   // set the content of div .
 
     var b = document.getElementById("begin").value.split(/\D/);
@@ -153,73 +236,69 @@ function displayCalendar(){
     var b = document.getElementById("finish").value.split(/\D/);
     var finish = new Date(b[0], --b[1], b[2]);
 
-    var rows = document.getElementsByClassName("calendar");
+    showLoading();
 
-    for(i=0; i<rows.length; i++){
+    $.when(getNumSpots(begin,finish)).done(function(result) {
+      var rows = document.getElementsByClassName("calendar");
+        for(i=0; i<rows.length; i++){
 
+            var id = rows[i].parentNode.parentNode.id;
 
-      var id = rows[i].parentNode.parentNode.id;
+            // console.log(JSON.parse(result));
 
+            var b = document.getElementById("begin").value.split(/\D/);
+            var begin = new Date(b[0], --b[1], b[2]);
+            var b = document.getElementById("finish").value.split(/\D/);
+            var finish = new Date(b[0], --b[1], b[2]);
 
-      $.when(getNumSpots(begin,finish,id)).done(function(result) {
+            var rArray = JSON.parse(result);
 
-          var b = document.getElementById("begin").value.split(/\D/);
-          var begin = new Date(b[0], --b[1], b[2]);
-          var b = document.getElementById("finish").value.split(/\D/);
-          var finish = new Date(b[0], --b[1], b[2]);
+            var innerHTML="";
 
-          var rArray = JSON.parse(result);
+            innerHTML += "<table class='innerCalendar'>";
 
-          var innerHTML="";
+            var month = begin.getMonth();
+            innerHTML += "<td><table class='month' id='"+ month +"'>";
 
-          innerHTML += "<table class='innerCalendar'>";
+            if(!isNaN(month)){
+              innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " +begin.getFullYear() +"</td></tr><tr>";
+            }
 
-          var month = begin.getMonth();
-          innerHTML += "<td><table class='month' id='"+ month +"'>";
+            var idSpot = 0;
+            while(begin<=finish){
+              if(begin.getMonth() == month){
 
-          if(!isNaN(month)){
-            innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " +begin.getFullYear() +"</td></tr><tr>";
-          }
+                var numSpots = 0;
+                idSpot++;
 
-          var idSpot = 0;
-          while(begin<=finish){
-            if(begin.getMonth() == month){
-
-              var numSpots = 0;
-              idSpot++;
-
-              for (var j = 0; j < rArray.length; j++) {
-
-
-                if(inputToDate(rArray[j]["fecha"]).getTime() === begin.getTime()){
-                  numSpots = rArray[j]["cantidad"];
+                for (var j = 0; j < rArray.length; j++) {
+                  if(rows[i].parentNode.parentNode.id == rArray[j]["idPautaRadio"] &&
+                    inputToDate(rArray[j]["fecha"]).getTime() === begin.getTime()){
+                    numSpots = rArray[j]["cantidad"];
+                  }
                 }
+
+
+                innerHTML += "<td class='completeDay'><table class='completeDayTable'><tr><td class='day'>" + begin.getDate() + "<input type='date' id='date' name='date' value='"+ dateToInput(begin) +"' hidden='true'></td></tr>" ;
+                innerHTML += "<tr><td class='numSpots'}'>"+numSpots+"</td></tr></table></td>" ;
+                begin.setDate(begin.getDate() + 1);
               }
+               else{
+                innerHTML +="</tr></table></td>";
+                month = begin.getMonth();
+                innerHTML += "<td><table class='month' id='"+ month +"'>";
+                innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " + begin.getFullYear() +"</td></tr><tr>";
+              }
+            }
 
-              innerHTML += "<td class='completeDay'><table class='completeDayTable'><tr><td class='day'>" + begin.getDate() + "<input type='date' id='date' name='date' value='"+ dateToInput(begin) +"' hidden='true'></td></tr>" ;
-              innerHTML += "<tr><td class='numSpots'}'>"+numSpots+"</td></tr></table></td>" ;
-              begin.setDate(begin.getDate() + 1);
-            }
-             else{
-              innerHTML +="</tr></table></td>";
-              month = begin.getMonth();
-              innerHTML += "<td><table class='month' id='"+ month +"'>";
-              innerHTML += "<tr><td class='monthTd' colspan='31'>"+ monthNames[month] +" " + begin.getFullYear() +"</td></tr><tr>";
-            }
+            innerHTML += "</table>";
+
+            rows[i].innerHTML=innerHTML;
+            setDaysModals();
+            hideLoading();
           }
-
-          innerHTML += "</table>";
-
-
-          for (var k = 0; k < rows.length; k++) {
-            if (rows[k].parentNode.parentNode.id == rArray[0]["idPautaRadio"]){
-
-              rows[k].innerHTML=innerHTML;
-            }
-          }
-          setDaysModals();
         });
-      }
+
 
 
 
@@ -322,4 +401,84 @@ function estadosChange(value){
       select.empty().append(htmlEstacion);
      }
     });
+}
+function changeECR(){
+
+    console.log("Change");
+    setDaysModals();
+}
+function deleteRenglon(renglon){
+  idRenglon =  renglon.parentNode.parentNode.childNodes[0].childNodes[0].innerHTML;
+
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {idRenglon: idRenglon},
+   async: true,
+   beforeSend: function(){
+     showLoading();
+    },
+   success: function(response) {
+     location.reload();
+   }
+  });
+}
+function sortSelects(selElem){
+  sortSel(selElem.parentNode.parentNode.childNodes[3].childNodes[0]);
+  sortSel(selElem.parentNode.parentNode.childNodes[2].childNodes[0]);
+  sortSel(selElem.parentNode.parentNode.childNodes[1].childNodes[0]);
+
+}
+function sortSel(selElem){
+
+  var tmpAry = new Array();
+    for (var i=0;i<selElem.options.length;i++) {
+        tmpAry[i] = new Array();
+        tmpAry[i][0] = selElem.options[i].text;
+        tmpAry[i][1] = selElem.options[i].value;
+    }
+    tmpAry.sort();
+    while (selElem.options.length > 0) {
+        selElem.options[0] = null;
+    }
+    for (var i=0;i<tmpAry.length;i++) {
+        var op = new Option(tmpAry[i][0], tmpAry[i][1]);
+        selElem.options[i] = op;
+    }
+    return;
+
+}
+
+function setSelectValues(selElem,prevEstado,prevCiudad,prevEstacion){
+  selElem.parentNode.parentNode.childNodes[1].childNodes[0].value = prevEstado;
+  selElem.parentNode.parentNode.childNodes[2].childNodes[0].value = prevCiudad;
+  selElem.parentNode.parentNode.childNodes[3].childNodes[0].value = prevEstacion;
+}
+function showLoading(){
+  var loading = document.getElementById('loading');
+  loading.style.display = "block";
+}
+function hideLoading(){
+  var loading = document.getElementById('loading');
+  loading.style.display = "none";
+}
+function mostrarModalNuevoRenglon(){
+  // -----------------------------------------------------------------------------
+  // Modals Management
+  // -----------------------------------------------------------------------------
+  var modal = document.getElementById('modalNuevoRenglon');
+
+  var span = document.getElementsByClassName("closeNuevoRenglon")[0];
+
+  modal.style.display = "block";
+
+  span.onclick = function() {
+      modal.style.display = "none";
+  }
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+  }
 }

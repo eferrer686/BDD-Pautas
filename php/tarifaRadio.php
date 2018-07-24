@@ -80,8 +80,7 @@ function searchTarifa(){
         "<tr class='trTableTop'><td>ID
         </td><td>Duracion
         </td><td>Tarifa General
-        </td><td>Tarifa Especifica
-        </td><td>Descuento
+        </td><td>Tarifa Cliente
         </td><td>Horario Inicio
         </td><td>Horario Fin
         </td></tr>
@@ -103,7 +102,6 @@ function searchTarifa(){
              "</td><td class='duracion' contenteditable=true>" . $row['duracion'] .
              "</td><td class='tarifaGeneral' contenteditable=true>" . $row['tarifaGeneral'] .
              "</td><td class='tarifaEspecifica' contenteditable=true>" . $row['tarifaEspecifica'] .
-             "</td><td class='descuento'contenteditable=true>" . $row['descuento'] .
              "</td><td class='horaInicio'><input type='time' value=" . $row['horaInicio'] .">".
              "</td><td class='horaFin'><input type='time' value=" . $row['horaFin'] .">".
              "</td></tr>";
@@ -116,7 +114,6 @@ function searchTarifa(){
           "</td><td class='duracion' contenteditable=true>" .
           "</td><td class='tarifaGeneral' contenteditable=true>" .
           "</td><td class='tarifaEspecifica' contenteditable=true>" .
-          "</td><td class='descuento'contenteditable=true>" .
           "</td><td class='horaInicio'><input type='time'>" .
           "</td><td class='horaFin'><input type='time'>" .
           "</td></tr>";
@@ -152,14 +149,11 @@ function searchTarifa(){
       $updateName = 'tarifaEspecifica';
       $updateValue = $newTable[$i][3];
       sqlUpdate();
-      $updateName = 'descuento';
+      $updateName = 'horaInicio';
       $updateValue = $newTable[$i][4];
       sqlUpdate();
-      $updateName = 'horaInicio';
-      $updateValue = $newTable[$i][5];
-      sqlUpdate();
       $updateName = 'horaFin';
-      $updateValue = $newTable[$i][6];
+      $updateValue = $newTable[$i][5];
       sqlUpdate();
 
 
@@ -195,14 +189,13 @@ function searchTarifa(){
 
 
 
-    $sql = 'INSERT INTO tarifaRadio (Radio_idRadio, duracion, tarifaGeneral, tarifaEspecifica, descuento, horaInicio, horaFin) VALUES ("' .
+    $sql = 'INSERT INTO tarifaRadio (Radio_idRadio, duracion, tarifaGeneral, tarifaEspecifica, horaInicio, horaFin) VALUES ("' .
       $_SESSION['idRadio'] .'","' .
       $lastRow[1] .'","' .
       $lastRow[2] .'","' .
       $lastRow[3] .'","' .
       $lastRow[4] .'","' .
-      $lastRow[5] .'","' .
-      $lastRow[6] .'")';
+      $lastRow[5] .'")';
 
       echo '<script language="javascript">';
       echo 'alert("'.$sql.'")';

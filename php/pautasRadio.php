@@ -13,6 +13,11 @@ if(isset($_SESSION['idPauta'])){
     $idPauta = $_SESSION['idPauta'];
     setPautasRadio();
 }
+
+if(isset($_POST['dateRange'])){
+  setRangeDates($_SESSION['idPauta']);
+}
+
 if(isset($_POST['estadoChange'])){
   estadoChange($_POST['estadoChange'],$_POST['parentID']);
 }
@@ -27,8 +32,7 @@ if(isset($_POST['ciudadID'])){
 //Ajax change of spots date per day
 if(isset($_POST['getSpotsCalendar'])){
   //Recibe fecha inicio y fecha fin
-  getSpotsCalendar($_POST['iDiaSpot'],($_POST['iMesSpot']+1),$_POST['iAñoSpot'],$_POST['fDiaSpot'],($_POST['fMesSpot']+1),$_POST['fAñoSpot'],$_POST['idPautaRenglon']);
-
+  getSpotsCalendar($_POST['iDiaSpot'],($_POST['iMesSpot']+1),$_POST['iAñoSpot'],$_POST['fDiaSpot'],($_POST['fMesSpot']+1),$_POST['fAñoSpot']);
   exit();
 }
 //Ajax change of spots date per day
@@ -44,6 +48,10 @@ if(isset($_POST['tablaModalSpots'])){
 
   updateModalTable(json_decode($_POST['tablaModalSpots']));
   exit();
+}
+//Ajax delete renglonPauta
+if(isset($_POST['idRenglon'])){
+  deleteRenglon($_POST['idRenglon']);
 }
 
 function searchRadios(){
@@ -132,10 +140,13 @@ function setPautasRadio(){
           "<p>Fechas</p>".
         "</td>".
         "<td>".
-          "<p>Spots</p>".
+          "<p>#Spots</p>".
         "</td>".
         "<td>".
           "<p>Inversion</p>".
+        "</td>".
+        "<td>".
+          "<p>Inversion Cliente</p>".
         "</td>".
         "<td>".
           "<p>Rating</p>".
@@ -147,10 +158,9 @@ function setPautasRadio(){
           "<p>Impactos</p>".
         "</td>".
         "<td>".
-          "<p>Inversion</p>".
+          "<p>Comision</p>".
         "</td>".
         "<td>".
-          "<p>Comision</p>".
         "</td>".
       "</tr>";
 
@@ -165,22 +175,25 @@ function setPautasRadio(){
                  "<td>".
                    "<p id='idTarifa'>". $idPautaRadio ."</p>".
                  "</td>".
-                 "<td id='estado' onchange = estadosChange(this)>".
-                   "<select>". selectEstados($idEstado) ."</select>".
+                 "<td id='estado' class='estado' onchange = estadosChange(this)>".
+                   "<select class='estadoSelect'>". selectEstados($idEstado) ."</select>".
                  "</td>"."<td id='ciudad' class='ciudad' onchange = ciudadesChange(this)>".
-                   "<select>". selectCiudades($idCiudad,$idEstado) ."</select>".
+                   "<select class='ciudadSelect'>". selectCiudades($idCiudad,$idEstado) ."</select>".
                  "</td>".
                  "<td id='estacion' class='estacion'>".
-                   "<select id='estacionSelect'>".selectEstaciones($idPautaRadio,$idCiudad)."</select>".
+                   "<select class='estacionSelect' id='estacionSelect'>".selectEstaciones($idPautaRadio,$idCiudad)."</select>".
                  "</td>".
                  "<td class=innerTD>".
                    "<div  id=calendar class=calendar></div>".
                  "</td>".
                  "<td>".
-                   "<p>Spots</p>".
+                   "<p>".getSpotsRenglon($idPautaRadio)."</p>".
                  "</td>".
                  "<td>".
-                   "<p>Inversion</p>".
+                   "<p>$".getInversion($idPautaRadio)."</p>".
+                 "</td>".
+                 "<td>".
+                   "<p>$".getInversionCliente($idPautaRadio)."</p>".
                  "</td>".
                  "<td>".
                    "<p>Rating</p>".
@@ -192,10 +205,10 @@ function setPautasRadio(){
                    "<p>Impactos</p>".
                  "</td>".
                  "<td>".
-                   "<p>Inversion</p>".
+                   "<p>Comision</p>".
                  "</td>".
                  "<td>".
-                   "<p>Comision</p>".
+                   "<p class='deleteRenglon'>&#10006</p>".
                  "</td>".
                "</tr>";
             }
@@ -571,7 +584,7 @@ function getSpotsDia($dia,$mes,$año,$idPautaRadio){
   "<tr class='spotsRadioDiaHeaders'><td>idSpot</td>" .
   "<td>Hora</td>" .
   "<td>Cantidad</td>" .
-  "<td>Duracion | Tarifa General | Tarifa Especifica | Descuento</td></tr>";
+  "<td>Duracion | Tarifa General | Tarifa Cliente | Descuento</td></tr>";
 
   if($result != null){
     $i=0;
@@ -635,14 +648,13 @@ function setTablaPautasRadio($idPautaRadio){
       }
   }
 }
-function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fAñoSpot,$idPautaRenglon){
+function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fAñoSpot){
   global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
 
   $r=[];
   // Buscar Tabla Relacional
   $sqlFrom = 'spotsRadio';
   $searchMethod="idPautaRadio";
-  $searchText = $idPautaRenglon;
 
   $sql = "
   SELECT
@@ -654,9 +666,9 @@ function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fA
         spotsradio
     WHERE
         fecha BETWEEN DATE_FORMAT('".$iAñoSpot."-%".$iMesSpot."-%".$iDiaSpot."', '%Y-%m-%d') AND DATE_FORMAT('".$fAñoSpot."-%".$fMesSpot."-%".$fDiaSpot."', '%Y-%m-%d')
-            AND idPautaRadio = ".$idPautaRenglon."
+
             AND idUser = ". $_SESSION['idUser']."
-      group by fecha
+      group by fecha ,idPautaRadio
       ;"
     ;
 
@@ -683,29 +695,48 @@ function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fA
 
 
 function updateModalTable($newTable){
-  global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple;
+  global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple,$servername, $username, $password, $dbname, $user, $pwd, $result,$con,$row;
 
 
   for ($i=0; $i < count($newTable)-1; $i++) {
+    if($newTable[$i][2]>0){
 
-    $tableID = 'idSpot';
-    $sqlFrom = 'spot';
+      $tableID = 'idSpot';
+      $sqlFrom = 'spot';
 
-    $idTuple = $newTable[$i][0];
+      $idTuple = $newTable[$i][0];
 
-    $updateName = 'hora';
-    $updateValue = $newTable[$i][1];
-    sqlUpdate();
+      $updateName = 'hora';
+      $updateValue = $newTable[$i][1];
+      sqlUpdate();
 
 
-    $updateName = 'cantidad';
-    $updateValue = $newTable[$i][2];
-    sqlUpdate();
+      $updateName = 'cantidad';
+      $updateValue = $newTable[$i][2];
+      sqlUpdate();
 
-    $updateName = 'tarifaRadio_idTarifa';
-    $updateValue = $newTable[$i][3];
-    sqlUpdate();
+      $updateName = 'tarifaRadio_idTarifa';
+      $updateValue = $newTable[$i][3];
+      sqlUpdate();
 
+    }
+    else{
+
+
+
+      $con = mysqli_connect($servername, $username, $password, $dbname);
+
+      // Check connection
+      if (mysqli_connect_errno())
+        {
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+        }
+
+      $sql = "DELETE FROM spot WHERE idSpot=" . $newTable[$i][0];
+
+      $result = mysqli_query($con,$sql);
+
+    }
   }
 
 
@@ -745,4 +776,167 @@ function addSpot($lastRow){
 
 
 }
+
+function setRangeDates($idPauta){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "SELECT
+                MAX(fecha) AS maxFecha, MIN(fecha) AS minFecha
+            FROM
+                spotsradio
+            WHERE
+                idPauta = ".$idPauta." AND idUser =".$_SESSION['idUser'];
+
+  $result = mysqli_query($con,$sql);
+
+  if($result != null){
+    $row = mysqli_fetch_array($result);
+    echo json_encode($row);
+  }
+  exit();
+}
+
+function getSpotsRenglon($idPautaRadio){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+  $sql = "SELECT
+  	sum(cantidad) as cantidad
+      FROM
+          spotsradio
+      WHERE
+          idPautaRadio =". $idPautaRadio ."
+              AND idUser = ".$_SESSION['idUser'];
+
+  $result = mysqli_query($con,$sql);
+
+  if($result != null){
+    $row = mysqli_fetch_array($result);
+    return $row['cantidad'];
+  }
+
+}
+function getInversion($idPautaRadio){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno())
+      {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+
+
+      $sql = "SELECT
+    	sum(cantidad) as cantidad,
+          idPautaRadio,
+          duracion,
+          tarifaGeneral,
+          tarifaEspecifica,
+
+          idTarifa
+        FROM
+            spotsradio
+        WHERE
+            idPautaRadio =". $idPautaRadio ."
+                AND idUser = ".$_SESSION['idUser']."
+          group by idTarifa";
+
+
+    $result = mysqli_query($con,$sql);
+
+    $inversion = 0;
+
+    if($result != null){
+      $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $inversion=$inversion + ($row['cantidad']*$row['tarifaGeneral']);
+        }
+    }
+    return $inversion;
+}
+function getInversionCliente($idPautaRadio){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno())
+      {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+
+
+      $sql = "SELECT
+    	sum(cantidad) as cantidad,
+          idPautaRadio,
+          duracion,
+          tarifaGeneral,
+          tarifaEspecifica,
+
+          idTarifa
+        FROM
+            spotsradio
+        WHERE
+            idPautaRadio =". $idPautaRadio ."
+                AND idUser = ".$_SESSION['idUser']."
+          group by idTarifa";
+
+
+    $result = mysqli_query($con,$sql);
+
+    $inversion = 0;
+
+    if($result != null){
+      $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $inversion=$inversion + ($row['cantidad']*$row['tarifaEspecifica']);
+        }
+    }
+    return $inversion;
+}
+
+function deleteRenglon($idPautaRadio){
+
+    global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno()){
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "DELETE FROM spot WHERE renglonPauta_idRenglonPauta=".$idPautaRadio;
+
+    $result = mysqli_query($con,$sql);
+
+    $sql = "DELETE FROM pautaradio WHERE idPautaRadio=".$idPautaRadio;
+
+    $result = mysqli_query($con,$sql);
+
+}
+
 ?>

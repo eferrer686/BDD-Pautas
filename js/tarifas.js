@@ -11,18 +11,16 @@ $(document).ready(function() {
       var duracion = row.cells[1].innerHTML.replace('<br>', '');
       var tarifaGeneral = row.cells[2].innerHTML.replace('<br>', '');
       var tarifaEspecifica = row.cells[3].innerHTML.replace('<br>', '');
-      var descuento = row.cells[4].innerHTML.replace('<br>', '');
-      var horaInicio = row.cells[5].childNodes[0].value;
-      var horaFin = row.cells[6].childNodes[0].value;
+      var horaInicio = row.cells[4].childNodes[0].value;
+      var horaFin = row.cells[5].childNodes[0].value;
 
 
       sqlRow[0]= idTarifas;
       sqlRow[1]= duracion;
       sqlRow[2]= tarifaGeneral;
       sqlRow[3]= tarifaEspecifica;
-      sqlRow[4]= descuento;
-      sqlRow[5]= horaInicio;
-      sqlRow[6]= horaFin;
+      sqlRow[4]= horaInicio;
+      sqlRow[5]= horaFin;
 
       sqlTable[i-1]=sqlRow;
 

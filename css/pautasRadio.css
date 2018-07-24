@@ -4,6 +4,13 @@ h1{
   padding: 10px;
   color: white;
 }
+h2{
+  font-family: sans-serif;
+  font-weight: bold;
+  padding: 10px;
+  color: grey;
+  text-align: center;
+}
 a{
   text-decoration: none;
   color: white;
@@ -129,6 +136,9 @@ input[type=button], input[type=submit]{
   border-radius: 2px;
 
 }
+input[type=button]:hover{
+  background-color: rgba(10,10,10);
+}
 
 input[type=date]{
  padding: 10px;
@@ -181,7 +191,8 @@ input[type=date]{
   color: grey;
 }
 /* The Close Button */
-.close {
+.close,
+.closeNuevoRenglon {
     color: #aaaaaa;
     font-size: 28px;
     font-weight: bold;
@@ -189,11 +200,46 @@ input[type=date]{
 }
 
 .close:hover,
-.close:focus {
+.close:focus,
+.closeNuevoRenglon:hover,
+.closeNuevoRenglon:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;
 }
+
 .modal-title{
   width: 100%;
+}
+.agregarNuevoRenglon{
+  right:    10px;
+  bottom:   10px;
+  position: fixed;
+}
+
+.deleteRenglon:hover{
+  cursor: pointer;
+}
+
+.agregarNuevoRenglon{
+  background-color: grey;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 2px;
+  position: absolute;
+  right:    10px;
+  bottom:   10px;
+  position: fixed;
+
+}
+.agregarNuevoRenglon:hover{
+
+  background-color: rgba(70,70,70,1);
+  transition:0.2s ease;
+}
+.inputNuevoRenglon{
+  margin: auto;
 }
