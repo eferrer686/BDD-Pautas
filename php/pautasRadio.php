@@ -13,7 +13,13 @@ if(isset($_SESSION['idPauta'])){
     $idPauta = $_SESSION['idPauta'];
     setPautasRadio();
 }
-
+//Set Nombre by AJAX
+if(isset($_POST['getNombre'])){
+    global $idPauta,$nombre;
+    setPautasRadio();
+    echo json_encode($nombre);
+    exit();
+}
 if(isset($_POST['dateRange'])){
   setRangeDates($_SESSION['idPauta']);
 }
@@ -52,6 +58,10 @@ if(isset($_POST['tablaModalSpots'])){
 //Ajax delete renglonPauta
 if(isset($_POST['idRenglon'])){
   deleteRenglon($_POST['idRenglon']);
+}
+//Ajax add renglonPauta
+if(isset($_POST['idNuevaRadio'])){
+  addRenglon($_POST['idNuevaRadio']);
 }
 
 function searchRadios(){
@@ -939,4 +949,58 @@ function deleteRenglon($idPautaRadio){
 
 }
 
+function setSelectECR(){
+  $idEstado = 0;
+  $idCiudad = 0;
+  $idPautaRadio = 0;
+
+  $html = "<table class='inputNuevoRenglon'>".
+            "<tr>".
+              "<td>".
+                "<p>Estados</p>".
+              "</td>".
+              "<td onchange = estadosNRChange(this)>".
+                "<select class='estadosNuevoRenglon'>". selectEstados($idEstado) ."</select>".
+              "</td>".
+            "</tr>".
+            "<tr>".
+              "<td>".
+                "<p>Ciudades</p>".
+              "</td>".
+              "<td onchange = ciudadesNRChange(this)>".
+                "<select class='ciudadesNuevoRenglon'>". selectCiudades($idCiudad,$idEstado) ."</select>".
+              "</td>".
+            "</tr>".
+            "<tr>".
+              "<td>".
+                "<p>Estaciones</p>".
+              "</td>".
+              "<td>".
+                "<select class='estacionesNuevoRenglon'>".selectEstaciones($idPautaRadio,$idCiudad)."</select>".
+              "</td>".
+            "</tr>".
+          "</table>";
+
+    echo $html;
+}
+
+function addRenglon($idRadio){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno()){
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  }
+
+  $sql = "INSERT INTO pautaradio (pauta_idPauta, radio_idRadio) VALUES (".
+    $_SESSION['idPauta'] .",".
+    $idRadio.")";
+
+  $result = mysqli_query($con,$sql);
+
+
+}
 ?>

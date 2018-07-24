@@ -482,3 +482,91 @@ function mostrarModalNuevoRenglon(){
     }
   }
 }
+
+
+//Todo sobre nuevo renglones
+function estadosNRChange(value){
+  var select = '';
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {estadoID: value.childNodes[0].value.toString()},
+   async: true,
+   success: function(response) {
+      response = JSON.parse(response);
+
+      var t ='';
+
+      for(var i = 0; i<response.length;i++){
+       t+="<option value='"+ response[i]['idciudad'] +"'>"
+       + response[i]['ciudad']
+       +"</option>";
+      }
+      /* Remove all options from the select list */
+      var select = $(document).find('.ciudadesNuevoRenglon');
+      select.empty().append(t);
+
+      var ciudad = select[0];
+      ciudadesNRChange(ciudad);
+    }
+  });
+}
+function ciudadesNRChange(value){
+  // console.log(value.childNodes[0].value.toString());
+
+  var idPauta = '';
+
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {ciudadID: value.childNodes[0].value.toString()},
+   async: true,
+   success: function(response) {
+    response = JSON.parse(response);
+
+    var htmlEstacion ='';
+    var htmlFrecuencia ='';
+    var htmlSiglas ='';
+
+    for(var i = 0; i<response.length;i++){
+     htmlEstacion+="<option value='"+ response[i]['idRadio'] +"'>"
+     + response[i]['estacion']+ " | "
+     + response[i]['frecuencia'] + " | "
+     + response[i]['siglas']
+     +"</option>";
+    }
+
+    /* Remove all options from the select list */
+    var select = $(document).find('.estacionesNuevoRenglon');
+    select.empty().append(htmlEstacion);
+   }
+  });
+}
+function agregarNuevoRenglon(){
+  var estado = $(document).find('.estadosNuevoRenglon')[0].value;
+  var ciudad = $(document).find('.ciudadesNuevoRenglon')[0].value;
+  var estacion = $(document).find('.estacionesNuevoRenglon')[0].value;
+
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {idNuevaRadio: estacion},
+   async: true,
+   success: function(response) {
+     location.reload();
+   }
+  });
+}
+function setNombre(){
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {getNombre:1},
+   async: true,
+   success: function(response) {
+     console.log(response)
+     var title = $(document).find('.titlePautasRadio')[0];
+     title.innerHTML = "Pautas de " + JSON.parse(response);
+   }
+  });
+}

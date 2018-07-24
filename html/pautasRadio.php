@@ -19,7 +19,7 @@
 
 </head>
 
-<body>
+<body onload="setNombre()">
   <!-- Modal de Fecha -->
   <!-- The Modal -->
 
@@ -50,40 +50,15 @@
       <table class="modal-title">
         <tr>
           <td>
-            <h2>Nuevo Renglon</h2>
+            <h2 id="titlePautas">Nuevo Renglon</h2>
           </td>
           <td>
             <span class=closeNuevoRenglon>&times;</span>
           </td>
         </tr>
       </table>
-      <table class="inputNuevoRenglon">
-        <tr>
-          <td>
-            <p>Estado</p>
-          </td>
-          <td>
-            <input type="text" name="" value="">
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <p>Ciudad</p>
-          </td>
-          <td>
-            <input type="text" name="" value="">
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <p>Estación</p>
-          </td>
-          <td>
-            <input type="text" name="" value="">
-          </td>
-        </tr>
-      </table>
-      <input type=button name=AceptarNuevoRenglon value=Aceptar class="AceptarNuevoRenglon">
+      <?php setSelectECR(); ?>
+      <input type=button name=AceptarNuevoRenglon value=Aceptar class="AceptarNuevoRenglon" onclick='agregarNuevoRenglon()'>
     </div>
   </div>
 
@@ -91,7 +66,7 @@
 
   <table class="topHTMLTable">
     <td>
-      <h1>Pautas de <?php printPautaNombre(); ?></h1>
+      <h1 class="titlePautasRadio">Pautas de </h1>
     </td>
     <td>
       <table class="setDates">

@@ -230,12 +230,12 @@ function setSelect($tipo,$id){
       exit();
     }elseif ($tipo == 2) {
       echo '<script language="javascript">';
-      echo 'alert("Es tv")';
+      echo 'alert("Es tv, por el momento no está disponible")';
       echo '</script>';
     }
     elseif ($tipo == 3) {
       echo '<script language="javascript">';
-      echo 'alert("Es espectacular")';
+      echo 'alert("Es espectacular, por el momento no está disponible")';
       echo '</script>';
     }
 
