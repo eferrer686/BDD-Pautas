@@ -21,7 +21,7 @@ select{
 .topHTMLTable{
   width: 100%;
 }
-.setDates p{
+.setDates p,.universo{
   font-family: sans-serif;
   font-weight: bold;
   padding: 10px;
@@ -92,9 +92,9 @@ select{
   align: center;
 }
 .calendar{
-  display: block;
+  /* display: block; */
   overflow-x: auto;
-  width: 30vw;
+  width: 35vw;
 }
 .month{
   border-left: 1px solid grey;
@@ -135,6 +135,17 @@ input[type=button], input[type=submit]{
   cursor: pointer;
   border-radius: 2px;
 
+}
+input[type=number]{
+  width: auto;
+  padding: 5px 5px;
+  border-radius: 2px;
+}
+select{
+  width: auto;
+  font-size: 12;
+  padding: 5px 5px;
+  border-radius: 2px;
 }
 input[type=button]:hover{
   background-color: rgba(10,10,10);
@@ -241,5 +252,17 @@ input[type=date]{
   transition:0.2s ease;
 }
 .inputNuevoRenglon{
+  margin: auto;
+}
+
+.exportarButton:hover{
+
+  background-color: rgba(70,70,70,1);
+  transition:0.2s ease;
+}
+.exportarButton{
+  left: 10px;
+  bottom: 10px;
+  position: fixed;
   margin: auto;
 }

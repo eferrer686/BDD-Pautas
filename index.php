@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" type="text/css" href="css/login.css">
-    
+
     <head>
        <div topnav = "topnav.php"></div>
        <link rel="icon" href="css/icon.png">
@@ -31,11 +31,7 @@
                     </table>
                 </form>
             </div>
-            <div class="registerLogin">
-                <form action="index.php" method="post">
-                <input type="submit" value="Register" name="register">
-                </form>
-            </div>
+          
         </div>
 
     </body>

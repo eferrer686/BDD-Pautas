@@ -7,6 +7,7 @@
 <html>
 <head>
 
+<script lang="javascript" src="../js/SheetJS/dist/xlsx.full.min.js"></script>
 <script src="../js/jquery-3.3.1.min.js"></script>
 <script src="../js/pautasRadio.js"></script>
 <title> Pautas </title>
@@ -82,10 +83,16 @@
         <td>
           <input type="date" name="finish" value="" class="finish" id = "finish">
         </td>
-        <td>
-          <img src="../images/loading.gif" alt="Loading..." id="loading" height="50" width="50" hidden="true">
-        </td>
       </table>
+      <td height=40 width=40>
+        <img src="../images/loading7.gif" alt="Loading..." id="loading" height="40" width="40" hidden="true">
+      </td>
+      <td>
+        <p class="universo">universo:</p>
+      </td>
+      <td>
+        <input type="number" id='universoPauta' name="universo" onchange="changeUniverso(this)" value= <?php getUniverso(); ?>>
+      </td>
     </td>
   </table>
 
@@ -96,7 +103,7 @@
 
 
   <input type="button" name="mostrarModalNuevoRenglon" id="mostrarModalNuevoRenglon" value="Agregar" class="agregarNuevoRenglon" onclick="mostrarModalNuevoRenglon()">
-
+  <input type="button" name="exportar" value="Exportar" class="exportarButton" onclick="exportClientVersion()">
 
 
 

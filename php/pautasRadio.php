@@ -41,6 +41,10 @@ if(isset($_POST['getSpotsCalendar'])){
   getSpotsCalendar($_POST['iDiaSpot'],($_POST['iMesSpot']+1),$_POST['iAñoSpot'],$_POST['fDiaSpot'],($_POST['fMesSpot']+1),$_POST['fAñoSpot']);
   exit();
 }
+//Ajax change of Estacion de renglon
+if(isset($_POST['updateToIdRadio'])){
+  changeEstacionRenglon($_POST['updateToIdRadio'],$_POST['updatePautaRenglon']);
+}
 //Ajax change of spots date per day
 if(isset($_POST['getSpotsDia'])){
 
@@ -49,9 +53,7 @@ if(isset($_POST['getSpotsDia'])){
   exit();
 }
 //Ajax update spots for day
-
 if(isset($_POST['tablaModalSpots'])){
-
   updateModalTable(json_decode($_POST['tablaModalSpots']));
   exit();
 }
@@ -62,6 +64,31 @@ if(isset($_POST['idRenglon'])){
 //Ajax add renglonPauta
 if(isset($_POST['idNuevaRadio'])){
   addRenglon($_POST['idNuevaRadio']);
+}
+//Ajax update spots for day
+if(isset($_POST['rating'])){
+  updateRating($_POST['idPautaRenglonRating'],$_POST['rating']);
+  exit();
+}
+//AJAX for update Universo
+if(isset($_POST['universo'])){
+  updateUniverso($_POST['universo']);
+  exit();
+}
+//AJAX for get Universo
+if(isset($_POST['getUniverso'])){
+  echo $_SESSION['universo'];
+  exit();
+}
+//AJAX for comisiones
+if(isset($_POST['getComision'])){
+  getComision();
+  exit();
+}
+//AJAX for export
+if(isset($_POST['exportClient'])){
+  exportClient();
+  exit();
 }
 
 function searchRadios(){
@@ -206,16 +233,16 @@ function setPautasRadio(){
                    "<p>$".getInversionCliente($idPautaRadio)."</p>".
                  "</td>".
                  "<td>".
-                   "<p>Rating</p>".
+                   "<p class='ratingPautaRadio' contenteditable=true>".getRating($idPautaRadio)."</p>".
                  "</td>".
                  "<td>".
-                   "<p>GRP's</p>".
+                   "<p class=grp></p>".
                  "</td>".
                  "<td>".
-                   "<p>Impactos</p>".
+                   "<p class=impacto></p>".
                  "</td>".
                  "<td>".
-                   "<p>Comision</p>".
+                   "<p class=comision></p>".
                  "</td>".
                  "<td>".
                    "<p class='deleteRenglon'>&#10006</p>".
@@ -567,7 +594,7 @@ function getNumSpotsDia($dia,$mes,$año,$idPautaRadio){
   $searchMethod="idPautaRadio";
   $searchText = $idPautaRadio;
 
-  $sql= "SELECT sum(cantidad) as cantidad from spotsradio where idUser = ".$_SESSION['idUser']." and fecha like DATE_FORMAT('". $año . "-" . $mes . "-" . $dia . "', '%Y-%m-%d') and idPautaRadio = " . $idPautaRadio;
+  $sql= "SELECT sum(cantidad) as cantidad from spotsradio where fecha like DATE_FORMAT('". $año . "-" . $mes . "-" . $dia . "', '%Y-%m-%d') and idPautaRadio = " . $idPautaRadio;
 
   $result = sqlSearchSpecificQuery($sql);
 
@@ -587,7 +614,7 @@ function getSpotsDia($dia,$mes,$año,$idPautaRadio){
   $tablaSpots;
 
   // Buscar Tabla Relacional
-  $sql= "SELECT * FROM spotsradio where fecha = DATE_FORMAT('". $año . "-" . $mes . "-" . $dia . "', '%Y-%m-%d') and idPautaRadio = " . $idPautaRadio . " and idUser = " . $_SESSION['idUser'];
+  $sql= "SELECT * FROM spotsradio where fecha = DATE_FORMAT('". $año . "-" . $mes . "-" . $dia . "', '%Y-%m-%d') and idPautaRadio = " . $idPautaRadio;
   $result = sqlSearchSpecificQuery($sql);
 
   $r = "<div class=bigTableContainer> <table class = spotsRadioDia id = spotsRadioDia>" .
@@ -623,20 +650,25 @@ function setSelectTarifa($idTarifa, $idPautaRadio){
   setTablaPautasRadio($idPautaRadio);
 
   $r = '';
+  if($tablaTarifas==null){
+    return "<option>No hay tarifas registradas</option>";
+  }
 
   for ($i=0; $i < count($tablaTarifas); $i++) {
     if($tablaTarifas[$i]['idTarifa'] == $idTarifa){
 
       $r = $r .
       "<option value='". $tablaTarifas[$i]['idTarifa'] ."' selected='selected'>"
-      .  $tablaTarifas[$i]['duracion']  ." | $"  . $tablaTarifas[$i]['tarifaGeneral'] . " | $"  . $tablaTarifas[$i]['tarifaEspecifica'] . " | " . $tablaTarifas[$i]['descuento'] . "</option>";}
+      .  $tablaTarifas[$i]['duracion']  ." | $"  . $tablaTarifas[$i]['tarifaGeneral'] . " | $"  . $tablaTarifas[$i]['tarifaEspecifica'] . " | " . $tablaTarifas[$i]['descuento'] . "</option>";
+    }
     else{
       $r = $r .
       "<option value='". $tablaTarifas[$i]['idTarifa'] ."'>"
       .  $tablaTarifas[$i]['duracion']  ." | $"  . $tablaTarifas[$i]['tarifaGeneral'] . " | $"  . $tablaTarifas[$i]['tarifaEspecifica'] . " | " . $tablaTarifas[$i]['descuento'] . "</option>";
       }
     }
-    return $r;
+  return $r;
+
 }
 function setTablaPautasRadio($idPautaRadio){
   global $servername, $username, $password, $dbname, $user, $pwd,$con,$row,$updateName,$updateValue,$tableID,$idTuple,
@@ -674,10 +706,10 @@ function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fA
       idPautaRadio
     FROM
         spotsradio
-    WHERE
-        fecha BETWEEN DATE_FORMAT('".$iAñoSpot."-%".$iMesSpot."-%".$iDiaSpot."', '%Y-%m-%d') AND DATE_FORMAT('".$fAñoSpot."-%".$fMesSpot."-%".$fDiaSpot."', '%Y-%m-%d')
+    
 
-            AND idUser = ". $_SESSION['idUser']."
+
+
       group by fecha ,idPautaRadio
       ;"
     ;
@@ -803,7 +835,7 @@ function setRangeDates($idPauta){
             FROM
                 spotsradio
             WHERE
-                idPauta = ".$idPauta." AND idUser =".$_SESSION['idUser'];
+                idPauta = ".$idPauta;
 
   $result = mysqli_query($con,$sql);
 
@@ -831,8 +863,7 @@ function getSpotsRenglon($idPautaRadio){
       FROM
           spotsradio
       WHERE
-          idPautaRadio =". $idPautaRadio ."
-              AND idUser = ".$_SESSION['idUser'];
+          idPautaRadio =". $idPautaRadio ;
 
   $result = mysqli_query($con,$sql);
 
@@ -867,7 +898,6 @@ function getInversion($idPautaRadio){
             spotsradio
         WHERE
             idPautaRadio =". $idPautaRadio ."
-                AND idUser = ".$_SESSION['idUser']."
           group by idTarifa";
 
 
@@ -909,7 +939,6 @@ function getInversionCliente($idPautaRadio){
             spotsradio
         WHERE
             idPautaRadio =". $idPautaRadio ."
-                AND idUser = ".$_SESSION['idUser']."
           group by idTarifa";
 
 
@@ -960,7 +989,7 @@ function setSelectECR(){
                 "<p>Estados</p>".
               "</td>".
               "<td onchange = estadosNRChange(this)>".
-                "<select class='estadosNuevoRenglon'>". selectEstados($idEstado) ."</select>".
+                "<select class='estadosNuevoRenglon' onfocus = estadosNRChange(this)>". selectEstados($idEstado) ."</select>".
               "</td>".
             "</tr>".
             "<tr>".
@@ -968,7 +997,7 @@ function setSelectECR(){
                 "<p>Ciudades</p>".
               "</td>".
               "<td onchange = ciudadesNRChange(this)>".
-                "<select class='ciudadesNuevoRenglon'>". selectCiudades($idCiudad,$idEstado) ."</select>".
+                "<select class='ciudadesNuevoRenglon' onfocus = ciudadesNRChange(this)>". selectCiudades($idCiudad,$idEstado) ."</select>".
               "</td>".
             "</tr>".
             "<tr>".
@@ -1000,7 +1029,227 @@ function addRenglon($idRadio){
     $idRadio.")";
 
   $result = mysqli_query($con,$sql);
+}
+function changeEstacionRenglon($idRadio,$idPautaRenglon){
+
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
 
 
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno()){
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+  }
+
+  $sql = "UPDATE pautaradio SET radio_idRadio=".$idRadio." WHERE idPautaRadio=".$idPautaRenglon;
+
+
+  $result = mysqli_query($con,$sql);
+
+  echo $sql;
+ exit();
+}
+function getRating($idPautaRadio){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno())
+      {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+
+
+      $sql = "SELECT
+                   idPautaRadio,
+          	       rating
+              FROM
+                  spotsradio
+              WHERE
+                  idPautaRadio =". $idPautaRadio;
+
+
+    $result = mysqli_query($con,$sql);
+
+    if($result != null){
+
+      $row = mysqli_fetch_array($result);
+      return  $row['rating'];
+
+    }
+
+}
+
+function updateRating($idPautaRadio,$rating){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "UPDATE `bddpautas`.`pautaradio`
+            SET
+                `rating` = '".$rating."'
+            WHERE
+                `idPautaRadio` = ".$idPautaRadio;
+
+  $result = mysqli_query($con,$sql);
+}
+function getUniverso(){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "SELECT
+                universo
+            FROM
+                bddpautas.pauta
+            WHERE
+                idPauta =". $_SESSION['idPauta'];
+
+
+
+  $result = mysqli_query($con,$sql);
+  if($result != null){
+    $row = mysqli_fetch_array($result);
+    echo  $row['universo'];
+    $_SESSION['universo']=$row['universo'];
+  }
+}
+function updateUniverso($universo){
+
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "UPDATE pauta
+            SET
+                universo = '".$universo."'
+            WHERE
+                idPauta = ". $_SESSION['idPauta'];
+
+
+  $result = mysqli_query($con,$sql);
+
+  $_SESSION['universo']=$universo;
+
+}
+function getComision(){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno())
+      {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+
+      $sql = "SELECT
+              	  r.idRadio,
+                  pr.idPauta,
+                  r.comision
+              FROM
+                  pautasradio AS pr
+                      JOIN
+                  radios AS r
+              WHERE
+                  r.idRadio = pr.idRadio
+                  and idPauta = " . $_SESSION['idPauta'];
+
+
+    $result = mysqli_query($con,$sql);
+
+    if($result != null){
+      $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $comisiones[$i] = $row;
+          $i=$i+1;
+        }
+    }
+
+    echo json_encode($comisiones);
+    exit();
+
+
+}
+
+function exportClient(){
+  global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+  $con = mysqli_connect($servername, $username, $password, $dbname);
+
+  // Check connection
+  if (mysqli_connect_errno())
+    {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "SELECT
+    fecha,
+    hora,
+    s.cantidad,
+    pr.nombre,
+    e.estado,
+    c.ciudad,
+    pr.idPautaRadio,
+    pr.estacion,
+    pr.frecuencia,
+    pr.siglas,
+    t.idTarifa,
+    t.duracion,
+    t.tarifaEspecifica
+FROM
+    tarifaRadio AS t
+        JOIN
+    spot AS s
+        JOIN
+    pautasradio AS pr
+        JOIN
+    estados AS e
+        JOIN
+    ciudades AS c
+WHERE
+    pr.idestado = e.idestado
+        AND s.tarifaRadio_idTarifa = t.idTarifa
+        AND c.idciudad = pr.idciudad
+        AND s.renglonPauta_idRenglonPauta = pr.idPautaRadio
+        AND pr.idPauta = ".$_SESSION['idPauta']."
+GROUP BY fecha";
+
+
+
+  $result = mysqli_query($con,$sql);
+
+  if($result != null){
+    $i=0;
+    while($row = mysqli_fetch_array($result))
+      {
+        $export[$i] = $row;
+        $i=$i+1;
+      }
+  }
+  echo json_encode($export);
+  exit();
 }
 ?>

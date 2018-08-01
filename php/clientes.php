@@ -4,9 +4,9 @@
   $nombreCliente = '';
   $numPautas = '';
 
-  if(isset($_POST['Buscar'])){
-      searchClientes();
-  }
+  // if(isset($_POST['Buscar'])){
+  //     searchClientes();
+  // }
   if(isset($_POST['Nuevo'])){
       goToAddCliente();
   }
@@ -20,8 +20,15 @@
   function searchClientes(){
       global $searchText;
       $_SESSION['searchMethod'] = 'nombre';
-      $_SESSION['searchText'] = $_POST['Nombre'];
-      header("Location: /bdd-pautas/html/clientes.php");
+
+      if(isset($_POST['Nombre'])){
+        $_SESSION['searchText'] = $_POST['Nombre'];
+      }
+      else{
+        $_SESSION['searchText'] = "";
+      }
+
+      searchCliente();
   }
   function searchCliente(){
       global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,

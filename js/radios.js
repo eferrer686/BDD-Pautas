@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  
+
 //Abrir modal de Nuevo Estado
   $(".nuevoEstado").click(function(){
 
@@ -81,6 +81,7 @@ $(document).ready(function() {
       sqlRow[6]= idProveedor;
 
       sqlTable[i-1]=sqlRow;
+
 
     }
     // console.log(sqlTable);

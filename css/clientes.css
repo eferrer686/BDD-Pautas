@@ -16,7 +16,7 @@ a{
 }
 .bigTableContainer{
   overflow:auto;
-  height:80%;
+  height:70%;
 }
 .tableClientes,.tablePautas{
   width: 100%;

@@ -14,7 +14,6 @@ $(document).ready(function() {
      $(".begin").val(begDate);
      $(".finish").val(finDate);
      displayTable();
-
    }
   });
 
@@ -44,7 +43,7 @@ $(document).ready(function() {
   }).change(function() {
       // Do something with the previous value after the change
       if(confirm("Estás seguro de cambiar la ciudad? Esto causaria que todos los spots almacenados se actualicen")){
-        changeECR();
+        changeECR(this);
       }else {
         sortSelects(this);
         setSelectValues(this,prevEstado,prevCiudad,prevEstacion);
@@ -59,7 +58,7 @@ $(document).ready(function() {
   }).change(function() {
       // Do something with the previous value after the change
       if(confirm("Estás seguro de cambiar la estación? Esto causaria que todos los spots almacenados se actualicen")){
-        changeECR();
+        changeECR(this);
       }else {
         sortSelects(this);
         setSelectValues(this,prevEstado,prevCiudad,prevEstacion);
@@ -76,7 +75,7 @@ $(document).ready(function() {
   }).change(function() {
       // Do something with the previous value after the change
       if(confirm("Estás seguro de cambiar el estado? Esto causaria que todos los spots almacenados se actualicen")){
-        changeECR();
+        changeECR(this);
       }else {
         sortSelects(this);
         setSelectValues(this,prevEstado,prevCiudad,prevEstacion);
@@ -145,7 +144,33 @@ $(document).ready(function() {
     });
 
   });
+  var timer=0;
+  var firstPass=true;
+  var tDate = new Date();
+  $(".ratingPautaRadio").keypress(function(e){
+    var keycode = e.which;
+    if(keycode == 0){
+      return true;
+    }
+          /* 48-57: 0 -9
+             8:backspace */
+    if((keycode >= 48 && keycode <= 57) || keycode == 8 || keycode == 46){
+      showLoading();
+      var ratingElem = this;
+      setTimeout(function () {
+        changeRating(ratingElem);
+      }, 5000);
 
+      return true;
+    } else {
+      return false;
+    }
+
+  });
+
+  getGRPS();
+  getImpactos();
+  getComision();
 });
 // date is expected to be a date object (e.g., new Date())
 const dateToInput = date =>
@@ -402,10 +427,30 @@ function estadosChange(value){
      }
     });
 }
-function changeECR(){
+function changeECR(tile){
+    // showLoading();
+    //
+    // setTimeout(function () {
+    //
+    //   idRadio = tile.parentNode.parentNode.childNodes[3].childNodes[0].value;
+    //   idPautaRenglon = tile.parentNode.parentNode.childNodes[0].childNodes[0].innerHTML;
+    //   $.ajax({
+    //    type: "POST",
+    //    url: '../html/pautasRadio.php',
+    //    data: {updateToIdRadio: idRadio,updatePautaRenglon: idPautaRenglon},
+    //    async: true,
+    //    beforeSend: function(){
+    //      showLoading();
+    //    },
+    //    success: function(response) {
+    //      console.log(response);
+    //      setDaysModals();
+    //      hideLoading();
+    //    }
+    //   });
+    //
+    // }, 1000);
 
-    console.log("Change");
-    setDaysModals();
 }
 function deleteRenglon(renglon){
   idRenglon =  renglon.parentNode.parentNode.childNodes[0].childNodes[0].innerHTML;
@@ -564,9 +609,176 @@ function setNombre(){
    data: {getNombre:1},
    async: true,
    success: function(response) {
-     console.log(response)
+
      var title = $(document).find('.titlePautasRadio')[0];
      title.innerHTML = "Pautas de " + JSON.parse(response);
    }
   });
+}
+
+
+function changeRating(elem){
+  showLoading();
+
+  var idPautaRenglon = elem.parentNode.parentNode.id;
+  var rating = elem.innerHTML.replace('<br>','').replace(' ','');
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {idPautaRenglonRating:idPautaRenglon, rating: rating},
+   async: true,
+   success: function(response) {
+     hideLoading();
+     getGRPS();
+     getImpactos();
+   }
+  });
+}
+function changeUniverso(elem){
+  showLoading();
+
+  var universo = elem.value;
+
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {universo: universo},
+   async: true,
+   success: function(response) {
+     hideLoading();
+
+   }
+  });
+
+}
+function getGRPS(){
+  var spots=0;
+  var rating = 0;
+  var grps = $(document).find('.grp');
+  for (var i = 0; i < grps.length; i++) {
+
+    spots = grps[i].parentNode.parentNode.childNodes[5].childNodes[0].innerHTML;
+    rating = grps[i].parentNode.parentNode.childNodes[8].childNodes[0].innerHTML;
+    grp = spots*rating;
+
+    grps[i].innerHTML=grp.toString().match(/^-?\d+(?:\.\d{0,3})?/);
+
+  }
+
+}
+function getImpactos(){
+  var spots=0;
+  var rating = 0;
+  var impactos = $(document).find('.impacto');
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {getUniverso: 0},
+   async: true,
+   success: function(response) {
+     for (var i = 0; i < impactos.length; i++) {
+
+
+       grps = impactos[i].parentNode.parentNode.childNodes[9].childNodes[0].innerHTML;
+       impacto = grps*response/100;
+
+       impactos[i].innerHTML=impacto.toString().match(/^-?\d+(?:\.\d{0,3})?/);
+     }
+   }
+  });
+}
+function getComision(){
+  var comision = $(document).find('.comision');
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {getComision: 0},
+   async: true,
+   success: function(response) {
+     response = JSON.parse(response);
+     // console.log(response);
+     for (var i = 0; i < comision.length; i++) {
+
+
+       idRadio = comision[i].parentNode.parentNode.childNodes[3].childNodes[0].value;
+       inversion = comision[i].parentNode.parentNode.childNodes[6].childNodes[0].innerHTML.replace('$', '');
+
+       for (var j = 0; j < response.length; j++) {
+         if(response[j]['idRadio']==idRadio){
+           comisionRadio = inversion*response[j]['comision']/100;
+           comision[i].innerHTML = "$"+comisionRadio.toString().match(/^-?\d+(?:\.\d{0,3})?/);
+         }
+       }
+     }
+   }
+  });
+}
+
+function exportClientVersion(){
+  var tablaCliente;
+
+  $.ajax({
+   type: "POST",
+   url: '../html/pautasRadio.php',
+   data: {exportClient: 0},
+   async: true,
+   success: function(response) {
+
+
+     var tablaFinal =[];
+
+     response = JSON.parse(response);
+     console.log(tablaFinal);
+
+     var prevIdPautaRenglon=response[0]['idPautaRadio'];
+     var firstPautaRadio = true;
+     var firstTarifa = true;
+
+     for (var i = 0; i < response.length; i++) {
+       if (firstPautaRadio || response[i]['idPautaRadio'] != prevIdPautaRenglon) {
+            firstPautaRadio=false;
+            tablaFinal[i] = {estado:response[i]['estado'],
+                            ciudad:response[i]['ciudad'],
+                            estacion: response[i]['estacion'],
+                            frecuencia: response[i]['frecuencia'],
+                            siglas: response[i]['siglas'],
+                            spots: []};
+            for (var j = 0; j < response.length; j++) {
+
+              if(firstTarifa ||
+                  response[j]['idTarifa'] == prevTarifa &&
+                  response[j]['idPautaRadio'] == response[i]['idPautaRadio'])
+              {
+
+                firstTarifa=false;
+                tablaFinal[i]['spots'].push({fecha: response[i]['fecha'],cantidad: response[i]['cantidad']});
+
+              }
+
+              prevTarifa = response[i]['idTarifa'];
+
+            }
+
+       }
+
+       prevIdPautaRenglon = response[i]['idPautaRadio'];
+     }
+     console.log(tablaFinal);
+
+
+
+     // delete response[0];
+     // ws = XLSX.utils.json_to_sheet(tablaFinal);
+     //
+     // var wb = XLSX.utils.book_new();
+     // XLSX.utils.book_append_sheet(wb, ws, "test");
+     // XLSX.writeFile(wb, "test.xlsx");
+   }
+  });
+
+  // tablePautas = $(document).find('.month')[0];
+  //
+  // ws = XLSX.utils.table_to_sheet(tablePautas);
+
+
 }

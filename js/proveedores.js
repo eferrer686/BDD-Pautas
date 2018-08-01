@@ -3,8 +3,8 @@ $(document).ready(function() {
   $(".trTableProveedores").dblclick(function(){
     var idProveedor = $(this).find(".idProveedor").text();
 
-    $(".idProveedorText").val(idProveedor);
-    $(".formProveedorInfo").submit();
+    // $(".idProveedorText").val(idProveedor);
+    // $(".formProveedorInfo").submit();
   });
 
   $(".comision").keypress(function(e){

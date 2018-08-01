@@ -1,6 +1,10 @@
 .topnav {
   overflow: hidden;
   background-color: rgba(10,10,10,0.5);
+
+
+  position: fixed;
+  top: 0;
   width: 100%;
 }
 
@@ -18,4 +22,7 @@
 
 .topnav a:hover {
   background-color: rgba(100,100,100,0.5);
+}
+.spacing{
+  height: 50px;
 }

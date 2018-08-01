@@ -33,7 +33,7 @@
       <input type="text" class="tablaSQLClientes" name="tablaSQLClientes" value="" hidden='true'>
     </form>
 
-    <?php searchCliente(); ?>
+    <?php searchClientes(); ?>
 
 
   </body>

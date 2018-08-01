@@ -3,9 +3,9 @@
 $idProveedor = '';
 $nombreProveedor = '';
 
-if(isset($_POST['Buscar'])){
-    searchProveedores();
-}
+// if(isset($_POST['Buscar'])){
+//     searchProveedores();
+// }
 if(isset($_POST['idProveedor'])){
   goToProveedor();
 }
@@ -19,8 +19,14 @@ if(isset($_POST['tablaSQLProveedores'])){
 function searchProveedores(){
     global $searchText;
     $_SESSION['searchMethod'] = 'nombre';
-    $_SESSION['searchText'] = $_POST['Nombre'];
-    header("Location: /bdd-pautas/html/proveedores.php");
+    if(isset($_POST['Nombre'])){
+      $_SESSION['searchText'] = $_POST['Nombre'];
+    }
+    else{
+      $_SESSION['searchText'] = "";
+    }
+
+    searchProveedor();
 }
 
 function searchProveedor(){

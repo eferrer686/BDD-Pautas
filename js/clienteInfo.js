@@ -19,8 +19,10 @@ $(document).ready(function() {
 
 
     // console.log(sqlTable);
-    $(".idPautaText").val(JSON.stringify(sqlTable));
-    $(".formPautaInfo").submit();
+    if (sqlTable[0]!=""){
+      $(".idPautaText").val(JSON.stringify(sqlTable));
+      $(".formPautaInfo").submit();
+    }
 
   });
 
@@ -36,7 +38,7 @@ $(document).ready(function() {
       var opt = sel.options[sel.selectedIndex];
       var tipo = opt.value;
 
-      var presupuesto = row.cells[3].innerHTML.replace('<br>', '');
+      var presupuesto = row.cells[3].innerHTML.replace('<br>', '').replace('$', '');
 
 
       sqlRow[0]= idPauta;
@@ -53,4 +55,40 @@ $(document).ready(function() {
     $(".actualizarInput").submit();
   });
 
+  $(".deleteRenglon").click(function(){
+    if(confirm("Estás seguro de eliminar todo este renglon, los cambios NO serán reversibles")){
+      deleteRenglon(this);
+    }
+  });
+
 });
+
+function setNombre(){
+  $.ajax({
+   type: "POST",
+   url: '../html/clienteInfo.php',
+   data: {getNombre:1},
+   async: true,
+   success: function(response) {
+
+     var title = $(document).find('.titleClienteInfo')[0];
+     title.innerHTML = "Cliente: " + JSON.parse(response);
+     title = $(document).find('.titleWindowClienteInfo')[0];
+     title.innerHTML = "Cliente: " + JSON.parse(response);
+   }
+  });
+}
+
+function deleteRenglon(renglon){
+  idRenglon =  renglon.parentNode.parentNode.childNodes[1].innerHTML;
+  
+  $.ajax({
+   type: "POST",
+   url: '../html/clienteInfo.php',
+   data: {idRenglon: idRenglon},
+   async: true,
+   success: function(response) {
+     location.reload();
+   }
+  });
+}

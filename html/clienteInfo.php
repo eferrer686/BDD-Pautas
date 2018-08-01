@@ -16,13 +16,13 @@
     <link rel="stylesheet" type="text/css" href="../css/background.css">
     <link rel="icon" href="../css/icon.png">
   </head>
-    <title> Cliente: <?php printNombreCliente(); ?> </title>
-  <body>
+    <title class="titleWindowClienteInfo"> Cliente: <?php printNombreCliente(); ?> </title>
+  <body onload="setNombre()">
     <form class="actualizarInput" action="clienteInfo.php" method="post">
       <input type="button" name="Actualizar" value="Actualizar" class="actualizarButton">
       <input type="text" class="tablaSQLPautas" name="tablaSQLPautas" value="" hidden='true'>
     </form>
-    <h1> Cliente: <?php printNombreCliente(); ?> </h1>
+    <h1 class="titleClienteInfo"> Cliente: <?php printNombreCliente(); ?> </h1>
     <table class="clienteInfo">
       <tr>
         <td>

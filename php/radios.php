@@ -84,17 +84,29 @@ function searchRadio(){
              "</select></td></tr>";
 
           }
-
+        if ($tablaProveedores!= null) {
           echo
           "<tr class='trTableRadios'id=editable>".
            "<td class='idRadio'>".
            "</td><td class='estacion' contenteditable=true>".
-           "</td><td class='estado'><select>" . selectEstados(0) ."</select>".
-           "</td><td class='ciudad'><select>" . selectCiudades(0,0) ."</select>".
+           "</td><td class='estado' onchange = estadosChange(this)><select>" . selectEstados(0) ."</select>".
+           "</td><td class='ciudad'><select>" . selectCiudades("","") ."</select>".
            "</td><td class='frecuencia'contenteditable=true>".
            "</td><td class='siglas' contenteditable=true>".
            "</td><td class='proveedor'><select>".setSelectProveedor(0,$tablaProveedores)."</select>".
            "</td> ";
+         } else {
+           echo
+           "<tr class='trTableRadios'id=editable>".
+            "<td class='idRadio'>".
+            "</td><td class='estacion' contenteditable=true>".
+            "</td><td class='estado' onchange = estadosChange(this)><select>" . selectEstados(0) ."</select>".
+            "</td><td class='ciudad'><select>" . selectCiudades("","") ."</select>".
+            "</td><td class='frecuencia'contenteditable=true>".
+            "</td><td class='siglas' contenteditable=true>".
+            "</td><td class='proveedor'><select><option>No hay proveedores todavia</option></select>".
+            "</td> ";
+         }
 
         echo"</table></div>";
     } else{
@@ -106,7 +118,6 @@ function searchRadio(){
   }
 
   function updateSQLTable(){
-
 
     global $searchText, $sqlFrom,$updateName,$updateValue,$tableID,$idTuple;
 
@@ -145,6 +156,7 @@ function searchRadio(){
         addRadio($newTable[count($newTable)-1]);
     }else{
 
+
       $result = mysqli_query($con,$sql);
       mysqli_close($con);
 
@@ -155,6 +167,7 @@ function searchRadio(){
     }
   }
   function addRadio($lastRow){
+
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
 
     $con = mysqli_connect($servername, $username, $password, $dbname);
@@ -165,10 +178,9 @@ function searchRadio(){
       echo "Failed to connect to MySQL: " . mysqli_connect_error();
       }
 
-    $sql = 'INSERT INTO radio (estacion, estado, ciudad, frecuencia, siglas,Proveedor_idProveedor) VALUES ("' .
+    $sql = 'INSERT INTO radio (estacion, ciudad_idCiudad, frecuencia, siglas,Proveedor_idProveedor) VALUES ("' .
 
       $lastRow[1] .'","' .
-      $lastRow[2] .'","' .
       $lastRow[3] .'","' .
       $lastRow[4] .'","' .
       $lastRow[5] .'","' .
@@ -185,8 +197,6 @@ function searchRadio(){
     $_SESSION['searchText'] = '';
 
     searchRadios();
-
-
   }
   function goToRadio(){
     $_SESSION['searchMethod'] = 'idRadio';
@@ -219,7 +229,11 @@ function searchRadio(){
             $i=$i+1;
         }
       }
-      return $tablaProveedores;
+      if(isset($tablaProveedores)){
+        return $tablaProveedores;
+      }else {
+        return null;
+      }
   }
 
 
@@ -246,21 +260,25 @@ function searchRadio(){
     global $tablaEstados;
 
     setTablaEstados($idEstado);
-
     $r='';
-    for ($j=0; $j < count($tablaEstados); $j++) {
-      if($tablaEstados[$j]['idestado'] == $idEstado){
-        $r = $r.
-        "<option value='". $tablaEstados[$j]['idestado'] ."' selected='selected'>"
-        .  $tablaEstados[$j]['estado'].
-        "</option>";}
-      else{
-        $r = $r.
-        "<option value='". $tablaEstados[$j]['idestado'] ."'>"
-        . $tablaEstados[$j]['estado'] ."</option>";
+    if($tablaEstados!=0){
+      for ($j=0; $j < count($tablaEstados); $j++) {
+        if($tablaEstados[$j]['idestado'] == $idEstado){
+          $r = $r.
+          "<option value='". $tablaEstados[$j]['idestado'] ."' selected='selected'>"
+          .  $tablaEstados[$j]['estado'].
+          "</option>";}
+        else{
+          $r = $r.
+          "<option value='". $tablaEstados[$j]['idestado'] ."'>"
+          . $tablaEstados[$j]['estado'] ."</option>";
 
+          }
         }
-      }
+    }
+    else {
+      $r = "<option>No hay estados todavia</option>";
+    }
       return $r;
   }
 

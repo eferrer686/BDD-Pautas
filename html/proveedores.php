@@ -34,7 +34,7 @@
       <input type="text" class="tablaSQLProveedores" name="tablaSQLProveedores" value="" hidden='true'>
     </form>
 
-    <?php searchProveedor(); ?>
+    <?php searchProveedores(); ?>
 
 
   </body>

@@ -121,6 +121,28 @@ function sqlSearchSpecific($sqlFrom,$searchMethod,$searchText){
     $result = mysqli_query($con,$sql);
     return $result;
 }
+function sqlSearchUnique(){
+
+    global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row;
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+
+    // Check connection
+    if (mysqli_connect_errno())
+      {
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+
+
+    $sql="SELECT * FROM ".$sqlFrom." where ".$searchMethod." like '".$searchText."' and idUser = ".$_SESSION['idUser'];
+    // logjs($sql);
+
+    $result = mysqli_query($con,$sql);
+
+
+
+}
+
 function sqlSearchSpecificQuery($sql){
 
     global $servername, $username, $password, $dbname, $user, $pwd,$con,$row;
@@ -204,7 +226,7 @@ function sqlUpdate(){
     $sql = "UPDATE ".$sqlFrom." SET ".$updateName."='".$updateValue."' WHERE ".$tableID."= ".$idTuple."";
 
     // echo '<script language="javascript">';
-    echo $sql;
+    // echo $sql;
     // echo '</script>';
 
     $result = mysqli_query($con,$sql);
@@ -236,6 +258,11 @@ function checkLogin(){
 function logjs($log){
   echo '<script language="javascript">';
   echo 'console.log("'.$log.'")';
+  echo '</script>';
+}
+function alertjs($log){
+  echo '<script language="javascript">';
+  echo 'alert("'.$log.'")';
   echo '</script>';
 }
 ?>

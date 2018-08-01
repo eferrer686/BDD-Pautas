@@ -7,6 +7,15 @@ if(isset($_POST['idPauta'])){
   $_SESSION['idPauta'] = json_decode($_POST['idPauta']);
   goToPautas();
 }
+if(isset($_POST['getNombre'])){
+    echo json_encode($_SESSION['nombreCliente']);
+    exit();
+}
+
+//Ajax delete renglonPauta
+if(isset($_POST['idRenglon'])){
+  deleteRenglon($_POST['idRenglon']);
+}
 
 function setAll(){
     global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,
@@ -34,12 +43,14 @@ function setAll(){
     if (isset($_SESSION['searchText'])){
         $searchText=$_SESSION['searchText'];
     }
-    sqlSearch();
+    sqlSearchUnique();
 
     if($result != null){
       while($row = mysqli_fetch_array($result))
         {
+
           $nombre =  $row['nombre'];
+          $_SESSION['nombreCliente']=$nombre;
           $contacto= $row['contacto'];
           $mail= $row['mail'];
           $telefono= $row['telefono'];
@@ -105,6 +116,8 @@ function pautasCliente(){
       </td><td>Tipo
       </td><td>Presupuesto
       </td><td>Inversión Total
+      </td><td>Inversión Cliente Total
+      <td>Delete</td>
       </td></tr>
        ";
 
@@ -112,7 +125,7 @@ function pautasCliente(){
 
      $searchText = $_SESSION['idCliente'];;
 
-  sqlSearch();
+  sqlSearchUnique();
 
   if($result != null){
       while($row = mysqli_fetch_array($result))
@@ -122,8 +135,12 @@ function pautasCliente(){
            <td class='idPauta'>" . $row['idPauta'] .
            "</td><td class='nombre' contenteditable=true>" . $row['nombre'] .
            "</td><td class='tipo'><select id='sel".$row['idPauta']."'>" . setSelect($row['tipo'],$row['idPauta']) .
-           "</td><td class='presupuesto' contenteditable=true>" . $row['presupuesto'] .
-           "</td><td class='invTotal'>" . $row['invTotal'] .
+           "</td><td class='presupuesto' contenteditable=true>$" . $row['presupuesto'] .
+           "</td><td class='invTotal'>$" . getInversionTotal($row['idPauta']) .
+           "</td><td class='invClienteTotal'>$" . getInversionClienteTotal($row['idPauta']) .
+           "<td>".
+             "<p class='deleteRenglon'>&#10006</p>".
+           "</td>".
            "</td> ";
         }
 
@@ -140,7 +157,7 @@ function pautasCliente(){
    "</td><td class='tipo'><select id='sel'>" . setSelect(0,"") .
    "</td><td class='presupuesto'contenteditable=true>".
    "</td><td class='invTotal'>".
-
+   "</td><td class='invClienteTotal'>".
    "</td></tr> ";
 
 echo"</table></div>";
@@ -240,4 +257,87 @@ function setSelect($tipo,$id){
     }
 
   }
+
+  function getInversionTotal($idPauta){
+    global $servername, $username, $password, $dbname, $user, $pwd;
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+    // Check connection
+    if (mysqli_connect_errno()){
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "SELECT
+              cantidad,
+              tarifaGeneral,
+              tarifaEspecifica
+            FROM
+              spotsradio
+            WHERE
+              idPauta = ".$idPauta;
+
+    $result = mysqli_query($con,$sql);
+
+    $inversion = 0;
+
+    if($result != null){
+      $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $inversion=$inversion + ($row['cantidad']*$row['tarifaGeneral']);
+        }
+    }
+    return $inversion;
+  }
+  function getInversionClienteTotal($idPauta){
+    global $servername, $username, $password, $dbname, $user, $pwd;
+
+    $con = mysqli_connect($servername, $username, $password, $dbname);
+    // Check connection
+    if (mysqli_connect_errno()){
+      echo "Failed to connect to MySQL: " . mysqli_connect_error();
+    }
+
+    $sql = "SELECT
+              cantidad,
+              tarifaGeneral,
+              tarifaEspecifica
+            FROM
+              spotsradio
+            WHERE
+              idPauta = ".$idPauta;
+
+    $result = mysqli_query($con,$sql);
+
+    $inversion = 0;
+
+    if($result != null){
+      $i=0;
+      while($row = mysqli_fetch_array($result))
+        {
+          $inversion=$inversion + ($row['cantidad']*$row['tarifaEspecifica']);
+        }
+    }
+    return $inversion;
+  }
+
+
+
+  function deleteRenglon($idPauta){
+
+      global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
+
+
+      $con = mysqli_connect($servername, $username, $password, $dbname);
+
+      // Check connection
+      if (mysqli_connect_errno()){
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+      }
+      $sql = "DELETE FROM pauta WHERE idPauta=". $idPauta;
+
+      $result = mysqli_query($con,$sql);
+
+  }
+
 ?>
