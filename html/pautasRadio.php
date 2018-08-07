@@ -7,7 +7,7 @@
 <html>
 <head>
 
-<script lang="javascript" src="../js/SheetJS/dist/xlsx.full.min.js"></script>
+<script lang="javascript" src="../js/xlsx.full.min.js"></script>
 <script src="../js/jquery-3.3.1.min.js"></script>
 <script src="../js/pautasRadio.js"></script>
 <title> Pautas </title>

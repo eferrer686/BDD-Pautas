@@ -4,9 +4,9 @@ $idRadio = '';
 $estacionRadio = '';
 $tablaEstados ='';
 
-if(isset($_POST['Buscar'])){
-  searchRadios();
-}
+// if(isset($_POST['Buscar'])){
+//   searchRadios();
+// }
 if(isset($_POST['idRadio'])){
   goToRadio();
 }
@@ -30,8 +30,15 @@ if(isset($_POST['ciudadNueva'])){
 function searchRadios(){
     global $searchText;
     $_SESSION['searchMethod'] = 'estacion';
-    $_SESSION['searchText'] = $_POST['Estacion'];
-    header("Location: /bdd-pautas/html/radios.php");
+
+    if(isset($_POST['Estacion'])){
+      $_SESSION['searchText'] = $_POST['Estacion'];
+    }
+    else{
+      $_SESSION['searchText'] = "";
+    }
+
+    searchRadio();
 }
 
 function searchRadio(){
@@ -154,16 +161,6 @@ function searchRadio(){
 
     if($newTable[count($newTable)-1][1]!=''){
         addRadio($newTable[count($newTable)-1]);
-    }else{
-
-
-      $result = mysqli_query($con,$sql);
-      mysqli_close($con);
-
-      $_SESSION['searchMethod'] = 'estacion';
-      $_SESSION['searchText'] = '';
-
-      searchRadios();
     }
   }
   function addRadio($lastRow){
@@ -192,11 +189,6 @@ function searchRadio(){
 
 
 
-
-    $_SESSION['searchMethod'] = 'estacion';
-    $_SESSION['searchText'] = '';
-
-    searchRadios();
   }
   function goToRadio(){
     $_SESSION['searchMethod'] = 'idRadio';

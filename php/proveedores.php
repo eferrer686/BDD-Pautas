@@ -115,15 +115,6 @@ function searchProveedor(){
 
     if($newTable[count($newTable)-1][1]!=''){
         addProveedor($newTable[count($newTable)-1]);
-    }else{
-
-      $result = mysqli_query($con,$sql);
-      mysqli_close($con);
-
-      $_SESSION['searchMethod'] = 'nombre';
-      $_SESSION['searchText'] = '';
-
-      searchProveedores();
     }
   }
   function addProveedor($lastRow){
@@ -154,10 +145,7 @@ function searchProveedor(){
     $result = mysqli_query($con,$sql);
     mysqli_close($con);
 
-    $_SESSION['searchMethod'] = 'nombre';
-    $_SESSION['searchText'] = '';
 
-    searchProveedores();
 
 
   }

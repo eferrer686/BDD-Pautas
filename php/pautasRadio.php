@@ -87,7 +87,12 @@ if(isset($_POST['getComision'])){
 }
 //AJAX for export
 if(isset($_POST['exportClient'])){
-  exportClient();
+  exportClient($_POST['exportClient']);
+  exit();
+}
+//AJAX for spotRenglon Export
+if(isset($_POST['getSpotsExport'])){
+  echo getSpotsExport($_POST['getSpotRenglonExport']);
   exit();
 }
 
@@ -706,7 +711,7 @@ function getSpotsCalendar($iDiaSpot,$iMesSpot,$iAñoSpot,$fDiaSpot,$fMesSpot,$fA
       idPautaRadio
     FROM
         spotsradio
-    
+
 
 
 
@@ -1194,7 +1199,7 @@ function getComision(){
 
 }
 
-function exportClient(){
+function exportClient($idPauta){
   global $servername, $username, $password, $dbname, $user, $pwd, $searchMethod, $searchText, $sqlFrom, $result,$con,$row,$updateName,$updateValue,$tableID,$idTuple;
 
   $con = mysqli_connect($servername, $username, $password, $dbname);
@@ -1205,38 +1210,7 @@ function exportClient(){
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
     }
 
-    $sql = "SELECT
-    fecha,
-    hora,
-    s.cantidad,
-    pr.nombre,
-    e.estado,
-    c.ciudad,
-    pr.idPautaRadio,
-    pr.estacion,
-    pr.frecuencia,
-    pr.siglas,
-    t.idTarifa,
-    t.duracion,
-    t.tarifaEspecifica
-FROM
-    tarifaRadio AS t
-        JOIN
-    spot AS s
-        JOIN
-    pautasradio AS pr
-        JOIN
-    estados AS e
-        JOIN
-    ciudades AS c
-WHERE
-    pr.idestado = e.idestado
-        AND s.tarifaRadio_idTarifa = t.idTarifa
-        AND c.idciudad = pr.idciudad
-        AND s.renglonPauta_idRenglonPauta = pr.idPautaRadio
-        AND pr.idPauta = ".$_SESSION['idPauta']."
-GROUP BY fecha";
-
+    $sql = "SELECT fecha, hora, s.cantidad, p.nombre, p.universo, e.estado, c.ciudad, pr.idPautaRadio, pr.rating, r.estacion, r.frecuencia, r.siglas, tr.idTarifa, tr.duracion, tr.tarifaEspecifica, tr.tarifaGeneral FROM pauta AS p JOIN pautaradio AS pr JOIN spot AS s JOIN radio AS r JOIN ciudad AS c JOIN estado AS e JOIN tarifaradio AS tr WHERE p.idPauta = pr.pauta_idPauta AND pr.idPautaRadio = s.renglonPauta_idRenglonPauta AND s.tarifaRadio_idTarifa = tr.idTarifa AND pr.radio_idRadio = r.idRadio AND r.ciudad_idciudad = c.idciudad AND c.estado_idestado = e.idEstado AND p.idPauta = ". $_SESSION['idPauta'] ." GROUP BY fecha";
 
 
   $result = mysqli_query($con,$sql);

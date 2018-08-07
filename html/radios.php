@@ -46,7 +46,7 @@
       <input type="text" class="tablaSQLRadios" name="tablaSQLRadios" value="" hidden='true'>
     </form>
 
-    <?php searchRadio(); ?>
+    <?php searchRadios(); ?>
 
 
     <!-- Modal Agregar Ciudad -->

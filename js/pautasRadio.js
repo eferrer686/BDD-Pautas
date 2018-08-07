@@ -715,6 +715,7 @@ function getComision(){
 }
 
 function exportClientVersion(){
+
   var tablaCliente;
 
   $.ajax({
@@ -724,15 +725,16 @@ function exportClientVersion(){
    async: true,
    success: function(response) {
 
-
      var tablaFinal =[];
+     var prevCantidad = 0;
 
      response = JSON.parse(response);
-     console.log(tablaFinal);
 
      var prevIdPautaRenglon=response[0]['idPautaRadio'];
      var firstPautaRadio = true;
      var firstTarifa = true;
+
+     var nombrePauta = response[0]['nombre'];
 
      for (var i = 0; i < response.length; i++) {
        if (firstPautaRadio || response[i]['idPautaRadio'] != prevIdPautaRenglon) {
@@ -742,29 +744,34 @@ function exportClientVersion(){
                             estacion: response[i]['estacion'],
                             frecuencia: response[i]['frecuencia'],
                             siglas: response[i]['siglas'],
-                            spots: []};
+                            spots: [],
+                            totalSpots: 0,
+                            inversion: 0,
+                            rating: 0,
+                            GRPS: 0,
+                            impactos: 0};
             for (var j = 0; j < response.length; j++) {
-
               if(firstTarifa ||
                   response[j]['idTarifa'] == prevTarifa &&
                   response[j]['idPautaRadio'] == response[i]['idPautaRadio'])
               {
-
                 firstTarifa=false;
-                tablaFinal[i]['spots'].push({fecha: response[i]['fecha'],cantidad: response[i]['cantidad']});
-
+                tablaFinal[i]['spots'].push({fecha: response[j]['fecha'],cantidad: response[j]['cantidad']});
+                tablaFinal[i]['totalSpots'] += parseInt(response[j]['cantidad']);
               }
-
               prevTarifa = response[i]['idTarifa'];
-
             }
+            tablaFinal[i]['inversion'] = parseFloat(tablaFinal[i]['totalSpots'])*parseFloat(response[i]['tarifaEspecifica']);
+            tablaFinal[i]['rating'] = response[i]['rating'];
+            tablaFinal[i]['GRPS'] = tablaFinal[i]['totalSpots']*tablaFinal[i]['rating'];
+            tablaFinal[i]['impactos'] = tablaFinal[i]['GRPS']*response[i]['universo']/100;
+
 
        }
-
        prevIdPautaRenglon = response[i]['idPautaRadio'];
      }
-     console.log(tablaFinal);
-
+     tablaFinal.clean(undefined);
+     console.log(JSON.stringify(tablaFinal));
 
 
      // delete response[0];
@@ -772,7 +779,7 @@ function exportClientVersion(){
      //
      // var wb = XLSX.utils.book_new();
      // XLSX.utils.book_append_sheet(wb, ws, "test");
-     // XLSX.writeFile(wb, "test.xlsx");
+     // XLSX.writeFile(wb, "Pauta_Radio_"+nombrePauta+".xlsx");
    }
   });
 
@@ -780,5 +787,14 @@ function exportClientVersion(){
   //
   // ws = XLSX.utils.table_to_sheet(tablePautas);
 
-
 }
+
+Array.prototype.clean = function(deleteValue) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] == deleteValue) {
+      this.splice(i, 1);
+      i--;
+    }
+  }
+  return this;
+};
